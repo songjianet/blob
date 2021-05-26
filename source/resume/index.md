@@ -15,7 +15,7 @@
 - 四年前端开发经验
 - Github: [songjianet](https://github.com/songjianet)
 - npm: [songjianet](https://www.npmjs.com/settings/songjianet/packages)
-- 邮箱: <a href="mailto:songjianet@gmil.com" style="color: blue;">songjianet@gmil.com</a>
+- 邮箱: <a href="mailto:songjianet@gmil.com">songjianet@gmil.com</a>
 
 ## ZOOMICRO - 2019-01 至 2020-11
 
@@ -49,6 +49,7 @@
 - 使用`VuePress`编写`wave api`文档；
 
 ## 开源项目
+
 其它正在开发中的开源项目请参考本人`Github`以及`npm`。
 
 - [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过6700；
