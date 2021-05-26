@@ -15,7 +15,7 @@
 - 四年前端开发经验
 - Github: [songjianet](https://github.com/songjianet)
 - npm: [songjianet](https://www.npmjs.com/settings/songjianet/packages)
-- 邮箱: <a href="mailto:songjianet@gmil.com">songjianet@gmil.com</a>
+- 邮箱: <a href="mailto:songjianet@gmail.com">songjianet@gmail.com</a>
 
 ## ZOOMICRO - 2019-01 至 2020-11
 
