@@ -1,0 +1,56 @@
+name: BLOG-CI
+
+# 这里可以设置不同的分支，比如在同一个源码仓库，利用两个不同的分支存储两个不同的博客，
+# 可以在不同分支的配置下设置不同的分支触发，下面假设Hexo文件保存在source分支
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # 使用模板库里面Checkout模板克隆并切换到指定分支，这里为source
+    steps:
+    - name: Checkout Repository master branch
+      uses: actions/checkout@master
+      with:
+        ref: source
+
+    # 搭建Node.js环境供Hexojs使用
+    - name: Setup Node.js 14.x
+      uses: actions/setup-node@master
+      with:
+        node-version: "14.x"
+
+    # 安装Hexojs
+    - name: Setup Hexo Dependencies
+      run: |
+        npm install hexo-cli -g
+        npm install
+
+    # 设置私钥，这里会读取在Secrets里设置的私钥，并通过环境变量与构建程序进行交互
+    - name: Setup Deploy Private Key
+      env:
+        HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.BLOG_TOKEN }}
+#       run: |
+#         mkdir -p ~/.ssh/
+#         echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
+#         chmod 600 ~/.ssh/id_rsa
+#         ssh-keyscan github.com >> ~/.ssh/known_hosts
+        
+    # 设置你的Git用户信息，会显示在Commit记录上，
+    # 如果与GitHub的账户信息相同，Commit会归到你的GitHub账户下面。
+#     - name: Setup Git Infomation
+#       run: |
+#         git config --global user.name '用户名'
+#         git config --global user.email '邮箱'
+
+    # 编译并部署
+    - name: Deploy Hexo
+      run: |
+        hexo clean
+        hexo generate
+        hexo deploy
