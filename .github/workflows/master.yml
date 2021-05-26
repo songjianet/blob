@@ -33,11 +33,11 @@ jobs:
     - name: Setup Deploy Private Key
       env:
         HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.BLOG_TOKEN }}
-#       run: |
-#         mkdir -p ~/.ssh/
-#         echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
-#         chmod 600 ~/.ssh/id_rsa
-#         ssh-keyscan github.com >> ~/.ssh/known_hosts
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
 
     # 设置你的Git用户信息，会显示在Commit记录上，
     # 如果与GitHub的账户信息相同，Commit会归到你的GitHub账户下面。
