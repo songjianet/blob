@@ -51,6 +51,6 @@
 ## 开源项目
 其它正在开发中的开源项目请参考本人`Github`以及`npm`。
 
-- [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超4600下载量的多功能表格工具；
-- [bpmn-painter](https://www.npmjs.com/package/bpmn-painter) 一个近1900下载量的符合`BPMN2.0`规范的流程设计器；
-- [wechat-city-picker](https://www.npmjs.com/package/wechat-city-picker) 基于微信小程序原生的省市区三级联动插件，最高单周下载量为1506；
+- [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，核心模块累计下载超过6700；
+- [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过4600下载量的多功能表格工具；
+- [wechat-city-picker](https://www.npmjs.com/package/wechat-city-picker) 基于微信小程序原生的省市区三级联动插件，最高单周下载量为1506，累计下载量超过4800；
