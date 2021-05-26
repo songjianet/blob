@@ -1,7 +1,5 @@
 name: BLOG-CI
 
-# 这里可以设置不同的分支，比如在同一个源码仓库，利用两个不同的分支存储两个不同的博客，
-# 可以在不同分支的配置下设置不同的分支触发，下面假设Hexo文件保存在source分支
 on:
   push:
     branches: [ master ]
@@ -40,13 +38,13 @@ jobs:
 #         echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
 #         chmod 600 ~/.ssh/id_rsa
 #         ssh-keyscan github.com >> ~/.ssh/known_hosts
-        
+
     # 设置你的Git用户信息，会显示在Commit记录上，
     # 如果与GitHub的账户信息相同，Commit会归到你的GitHub账户下面。
-#     - name: Setup Git Infomation
-#       run: |
-#         git config --global user.name '用户名'
-#         git config --global user.email '邮箱'
+     - name: Setup Git Infomation
+       run: |
+         git config --global user.name 'songjianet'
+         git config --global user.email '1778651752@qq.com'
 
     # 编译并部署
     - name: Deploy Hexo
