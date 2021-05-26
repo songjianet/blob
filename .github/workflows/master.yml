@@ -15,7 +15,7 @@ jobs:
     - name: Checkout Repository master branch
       uses: actions/checkout@master
       with:
-        ref: source
+        ref: master
 
     # 搭建Node.js环境供Hexojs使用
     - name: Setup Node.js 14.x
