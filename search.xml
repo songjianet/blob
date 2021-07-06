@@ -94,198 +94,6 @@
       </tags>
   </entry>
   <entry>
-    <title>CentOS6.9下对MySQL5.7的用户权限管理</title>
-    <url>/blog/2018/04/17/CentOS6.9%E4%B8%8B%E5%AF%B9MySQL5.7%E7%9A%84%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</url>
-    <content><![CDATA[<p>在实际开发中的很多情况下，我们不免要对数据库根据用户的不同进行权限的分配。在MySQL数据库中，基本有28种权限，我们可以将其归类成三大类的权限。</p>
-<h4 id="MySQL的权限分类"><a href="#MySQL的权限分类" class="headerlink" title="MySQL的权限分类"></a>MySQL的权限分类</h4><h5 id="一）数据操作类"><a href="#一）数据操作类" class="headerlink" title="一）数据操作类"></a>一）数据操作类</h5> <div class="table-responsive"><table class="table table-striped table-bordered table-hover"><tr><td>操作</td><td>含义</td></tr><tr><td>SELECT</td><td>查询权限</td></tr><tr><td>INSERT</td><td>插入权限</td></tr><tr><td>UPDATE</td><td>更新权限</td></tr><tr><td>DELETE</td><td>删除数据权限</td></tr><tr><td>FILE</td><td>文件访问权限</td></tr></table></div>
-
-<h5 id="二）结构操作类"><a href="#二）结构操作类" class="headerlink" title="二）结构操作类"></a>二）结构操作类</h5><div class="table-responsive"><table class="table table-striped table-bordered table-hover"><tr><td>操作</td><td>含义</td></tr><tr><td>CREATE</td><td>创建数据库、表或索引权限</td></tr><tr><td>ALTER</td><td>更改表权限（添加字段或者索引等）</td></tr><tr><td>INDEX</td><td>索引权限</td></tr><tr><td>DROP</td><td>删除数据库或表权限</td></tr><tr><td>CREATE TEMPORARY TABLES</td><td>创建临时表权限</td></tr><tr><td>SHOW VIEW</td><td>查看视图权限</td></tr><tr><td>CREATE ROUTINE</td><td>创建存储过程权限</td></tr><tr><td>ALTER ROUTINE</td><td>更改存储过程权限</td></tr><tr><td>EXECUTE</td><td>执行存储过程权限</td></tr><tr><td>CREATE VIEW</td><td>创建视图权限</td></tr><tr><td>EVENT</td><td>可在数据下创建时间调度器权限</td></tr><tr><td>TRIGGER</td><td>可在数据下创建触发器权限</td></tr></table></div>
-
-<h5 id="三）管理操作类"><a href="#三）管理操作类" class="headerlink" title="三）管理操作类"></a>三）管理操作类</h5><div class="table-responsive"><table class="table table-striped table-bordered table-hover"><tr><td>操作</td><td>含义</td></tr><tr><td>GRANT</td><td>赋予权限选项</td></tr><tr><td>SUPER</td><td>执行kill线程权限</td></tr><tr><td>PROCESS</td><td>查看进程权限</td></tr><tr><td>RELOAD</td><td>执行flush-hosts，flush-logs等权限</td></tr><tr><td>SHUTDOWN</td><td>创建临时表权限</td></tr><tr><td>SHOW DATABASES</td><td>关闭数据库权限</td></tr><tr><td>LOCK TABLES</td><td>可对其下所有表进行锁定权限</td></tr><tr><td>REFERENCES</td><td>未来MySQL特性的占位符</td></tr><tr><td>REPLICATION CLIENT</td><td>复制权限</td></tr><tr><td>REPLICATION SLAVE</td><td>复制权限</td></tr><tr><td>CREATE USER</td><td>创建用户权限</td></tr></table></div>
-
-
-
-<h4 id="MySQL的权限操作（以root用户登录到数据库进行操作）"><a href="#MySQL的权限操作（以root用户登录到数据库进行操作）" class="headerlink" title="MySQL的权限操作（以root用户登录到数据库进行操作）"></a>MySQL的权限操作（以root用户登录到数据库进行操作）</h4><h5 id="一）创建用户"><a href="#一）创建用户" class="headerlink" title="一）创建用户"></a>一）创建用户</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> CREATE USER <span class="string">'username'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'password'</span>;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> CREATE USER <span class="string">'username1'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'password1'</span>;</span></span><br></pre></td></tr></table></figure>
-
-<p>注：</p>
-<p>username为用户名</p>
-<p>password为用户密码</p>
-<p>localhost只允许在本机登录数据库</p>
-<p>%任何一台电脑上都可以远程登陆</p>
-<h5 id="二）受理权限"><a href="#二）受理权限" class="headerlink" title="二）受理权限"></a>二）受理权限</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> GRANT privileges ON databasename.tablename TO <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
-
-<p>注：</p>
-<p>privileges为用户操作权限，例如select等，如果需要所有权限直接写all</p>
-<p>databasename为数据库名，给某个用户访问某个数据库的权限，如果给某个用户所有库的访问权限可以用*表示</p>
-<p>tablename为表名，如果为某个库下的所有表可以用*号表示</p>
-<h5 id="三）撤销用户权限"><a href="#三）撤销用户权限" class="headerlink" title="三）撤销用户权限"></a>三）撤销用户权限</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> REVOKE privilege ON databasename.tablename FROM <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="四）删除账号及权限"><a href="#四）删除账号及权限" class="headerlink" title="四）删除账号及权限"></a>四）删除账号及权限</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> REVOKE privilege ON databasename.tablename FROM <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="五）查看用户的权限信息"><a href="#五）查看用户的权限信息" class="headerlink" title="五）查看用户的权限信息"></a>五）查看用户的权限信息</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> SHOW GRANTS FOR <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
-<h5 id="六）刷新权限操作"><a href="#六）刷新权限操作" class="headerlink" title="六）刷新权限操作"></a>六）刷新权限操作</h5><p>这里我需要着重的强调一下，如果使用delete对数据库用户删除后需要执行一遍刷新flush privileges;否则会报有1396错误；建议还是使用drop等相关命令进行做删除用户操作。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> flush privileges;</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>CentOS6.9</tag>
-        <tag>MySQL5.7</tag>
-        <tag>MySQL权限分类</tag>
-        <tag>MySQL5.7权限分配</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CentOS7定时清理buff/cache内存占用过高</title>
-    <url>/blog/2018/03/20/CentOS7%E5%AE%9A%E6%97%B6%E6%B8%85%E7%90%86buffcache%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/</url>
-    <content><![CDATA[<p>最近因为公司事物过多，没有时间去更新博客，今天在查看自己博客的时候发现，应该对之前的一片文章<a href="http://120.79.151.66:4000/2018/02/06/buffcache%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/" target="_blank" rel="noopener">buff / cache内存占用过高</a>进行更深度的讲解，以及通过定时任务，解放人为清理的麻烦。</p>
-<p>首先，在linux系统中想到自动化处理任务，无疑就是crontab，crontab就是linux系统中的自动化处理的程序，在默认的情况下，系统是自带crontab程序的，只是处于关闭状态，但是本篇文章依旧为大家提供crontab的安装方式。</p>
-<p>1.安装crontab</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum install vixie-cron</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> yum install crontabs</span></span><br></pre></td></tr></table></figure>
-
-<p>2.查看crond.service的服务自启动状态</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl is-enabled crond.service</span></span><br><span class="line">disabled</span><br></pre></td></tr></table></figure>
-
-<p>3.使crond.service的服务在开机时自启动</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl <span class="built_in">enable</span> crond.service</span></span><br></pre></td></tr></table></figure>
-
-<p>4.再次查看crond.service的服务自启动状态</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl is-enabled crond.service</span></span><br><span class="line">enabled</span><br></pre></td></tr></table></figure>
-
-<p>5.其他关于crond.service操作的基本命令</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl start crond.service // 启动</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl stop crond.service // 关闭</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl restart crond.service // 重启</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl reload crond.service // 重新载入配置</span></span><br></pre></td></tr></table></figure>
-
-<p>6.crontab文件格式</p>
-<p><img src="/blog/images/images/CentOS7%E5%AE%9A%E6%97%B6%E6%B8%85%E7%90%86buffcache%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/%E6%9F%A5%E7%9C%8Bcrontab%E8%A7%84%E5%88%99.png" alt="查看crontab规则"></p>
-<p>7.crontab的特殊字符</p>
-<blockquote>
-<p>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。</p>
-<p>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”。</p>
-<p>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”。</p>
-<p>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
-</blockquote>
-<p>8.接下来我们要创建一个shell脚本，里面存放一个清除buff / cache的命令，通过让crontab在什么时间去执行这个shell脚本，而实现定时清理的任务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vim /home/automaticallyCleanUpMemory.sh</span></span><br></pre></td></tr></table></figure>
-
-<p>9.在文件中写入清理buff / cache的命令，推出保存</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">echo 3 &gt; /proc/sys/vm/drop_caches</span><br></pre></td></tr></table></figure>
-
-<p>10.定时任务相关操作</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> crontab -e // 创建一个定时任务</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> crontab -l // 列出当前用户的定时任务</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> crontab -r // 删除当前用户的定时任务</span></span><br></pre></td></tr></table></figure>
-
-<p>11.创建一个定时任务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> crontab -e</span></span><br></pre></td></tr></table></figure>
-
-<p>12.将什么时候执行什么任务写在任务中</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">0 4 * * * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每天早上四点执行一次automaticallyCleanUpMemory.sh脚本</span><br></pre></td></tr></table></figure>
-
-<p>到这里我们的自动清理buff / cache内存的方法就介绍完了，接下来介绍一些相关的其他操作示例</p>
-<p>示例：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">* * * * * /home/automaticallyCleanUpMemory.sh </span><br><span class="line">// 每一分钟执行一次</span><br><span class="line">10,15 * * * * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每小时的第十分钟和第十五分钟执行一次</span><br><span class="line">15 8 * * * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每天早上八点十五执行一次</span><br><span class="line">15 8 1 jan * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 一月一号的早上八点十五执行一次</span><br><span class="line">0 6 * * 6 /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每个星期六的早上六点执行一次</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>crontab</tag>
-        <tag>buff/cache</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Centos6.9安装MySQL5.7，以及数据库迁移</title>
-    <url>/blog/2018/03/05/Centos6.9%E5%AE%89%E8%A3%85MySQL5.7/</url>
-    <content><![CDATA[<p>身为一名佛系程序员，在一个佛系公司上班，真是身不由己，一切随缘。这不因为公司没有运维我又干起了运维的活，这次主要是介绍一下如何在Centos6.9环境下安装MySQL5.7。这时候就有小伙伴问了，为什么要用Centos6.9不用7.4呢，说起来都是泪啊，公司没几个会的啊，我倒是想用7.4，泪奔。</p>
-<p>（一）下载四个软件包到/home下（可以自己选择下载路径）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-client-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-common-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-libs-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-server-5.7.18-1.el6.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
-
-<p>（二）检查mysql rpm相关的包是否安装并去除</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm -qa | grep -i mysql</span></span><br><span class="line">mysql-libs-5.1.73-8.el6_8.x86_64</span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -e mysql-libs-5.1.73-8.el6_8.x86_64</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> yum remove -y mysql-libs // 删除依赖包</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -qa | grep -i mysql // 在此查询如果没有信息显示则表示删除成功</span></span><br></pre></td></tr></table></figure>
-
-<p>（三）同时安装这四个rpm包</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm -ivh mysql-community-client-5.7.18-1.el6.x86_64.rpm mysql-community-common-5.7.18-1.el6.x86_64.rpm mysql-community-libs-5.7.18-1.el6.x86_64.rpm mysql-community-server-5.7.18-1.el6.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
-
-<p>（四）如果安装时提示缺少依赖执行numactl的安装</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm -ivh mysql-community-client-5.7.18-1.el6.x86_64.rpm mysql-community-common-5.7.18-1.el6.x86_64.rpm mysql-community-libs-5.7.18-1.el6.x86_64.rpm mysql-community-server-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line">warning: mysql-community-client-5.7.18-1.el6.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEY</span><br><span class="line">error: Failed dependencies:</span><br><span class="line">libnuma.so.1()(64bit) is needed by mysql-community-server-5.7.18-1.el6.x86_64</span><br><span class="line">libnuma.so.1(libnuma_1.1)(64bit) is needed by mysql-community-server-5.7.18-1.el6.x86_64</span><br><span class="line">libnuma.so.1(libnuma_1.2)(64bit) is needed by mysql-community-server-5.7.18-1.el6.x86_64</span><br><span class="line"><span class="meta">#</span><span class="bash"> yum install -y numactl</span></span><br></pre></td></tr></table></figure>
-
-<p>到这里，基本的安装就已经完成了，接下来我们要对数据库进行基本的设置，通过基本设置后我们会进行数据的迁移工作。</p>
-<p>（一）首先停止掉MySQL的服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> service mysqld stop</span></span><br></pre></td></tr></table></figure>
-
-<p>（二）跳过MySQL密码认证，在[mysqld]后面任意一行添加“skip-grant-tables”用来跳过密码验证的过程</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vim /etc/my.cnf</span></span><br></pre></td></tr></table></figure>
-
-<p>（三）重新启动MySQL服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> service mysqld start</span></span><br></pre></td></tr></table></figure>
-
-<p>（四）重启后通过mysql命令即可进入到数据库中</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mysql</span></span><br></pre></td></tr></table></figure>
-
-<p>（五）使用sql修改数据库的密码</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> use mysql; // 使用这个数据库</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> update user <span class="built_in">set</span> password=password(<span class="string">"你的新密码"</span>) <span class="built_in">where</span> user=<span class="string">"root"</span>; // 设置密码</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> flush privileges; // 立即生效</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> quit // 退出数据库</span></span><br></pre></td></tr></table></figure>
-
-<p>（六）去掉配置文件中的“skip-grant-tables”，并且重启MySQL服务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> service mysqld restart</span></span><br></pre></td></tr></table></figure>
-
-<p>在配置完数据库的基本设置后，就要进行数据库的数据搬迁，首先要准备两个数据库，我这里用的是公司的两台数据库服务器。</p>
-<p>原有数据库服务器：10.2.8.123</p>
-<p>新的数据库服务器：10.2.8.128</p>
-<p>（一）在原有数据库服务器上操作，讲数据和表结构导出成sql文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mysqldump -uroot -p dbname &gt; /home/dbname .sql // 导出数据和表结构</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> mysqldump -uroot -p -d dbname &gt; dbname .sql // 只导出表结构</span></span><br></pre></td></tr></table></figure>
-
-<p>（二）在新的数据库服务器上操作，讲原有服务器上备份的sql文件复制到新服务器上（注：如果没有配置ssh免密登录，在执行如下命令时会提示输入密码，如果想跳过此步骤，请参考<a href="http://120.79.151.66:4000/2018/02/28/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B9%8B%E9%97%B4%E8%BF%9C%E7%A8%8B%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E5%8F%8A%E6%96%87%E4%BB%B6%E5%A4%B9/" target="_blank" rel="noopener">ssh免密登录</a>）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> scp root@10.2.8.123:/home/dbname.sql /home</span></span><br></pre></td></tr></table></figure>
-
-<p>（三）在新机器上导入拷贝过来的sql</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> create database dbname; // 创建数据库</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> use dbname; // 使用数据库</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> <span class="built_in">set</span> names utf8; // 设置数据库编码格式</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> <span class="built_in">source</span> /home/dbname.sql; // 把sql文件导入到数据库</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>MySQL5.7</tag>
-        <tag>Centos6.9</tag>
-        <tag>数据库迁移</tag>
-        <tag>scp</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Centos7升级内核</title>
-    <url>/blog/2018/06/30/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/</url>
-    <content><![CDATA[<p>内核主要有两种作用：</p>
-<p>1.作为硬件和系统上运行的软件之间的接口；</p>
-<p>2.尽可能地高效管理资源；</p>
-<p>为此，内核通过内置的驱动程序或以后可作为模块安装的驱动程序与硬件通信。 </p>
-<p>例如，当你计算机上运行的程序想要连接到无线网络时，它会将该请求提交给内核，后者又会使用正确的驱动程序连接到网络。 </p>
-<p>随着新的设备和技术定期出来，如果我们想充分利用它们，保持最新的内核就很重要。此外，更新内核将帮助我们利用新的内核函数，并保护自己免受先前版本中发现的漏洞的攻击。 </p>
-<p style="color: red;">*这篇文章的方式支持发行版本种Centos7系统上进行操作</p>
-
-<h5 id="检查已安装的内核版本"><a href="#检查已安装的内核版本" class="headerlink" title="检查已安装的内核版本"></a>检查已安装的内核版本</h5><p>当前我的系统内核版本为Linux 3.10.0-862.3.3.el7.x86_64</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> uname -sr</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/666.png" alt="666"></p>
-<h5 id="在系统中启用ELRepo第三方库"><a href="#在系统中启用ELRepo第三方库" class="headerlink" title="在系统中启用ELRepo第三方库"></a>在系统中启用ELRepo第三方库</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="列出可用的内核相关包"><a href="#列出可用的内核相关包" class="headerlink" title="列出可用的内核相关包"></a>列出可用的内核相关包</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum --disablerepo=<span class="string">"*"</span> --enablerepo=<span class="string">"elrepo-kernel"</span> list available</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="安装最新的主线稳定内核"><a href="#安装最新的主线稳定内核" class="headerlink" title="安装最新的主线稳定内核"></a>安装最新的主线稳定内核</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum --enablerepo=elrepo-kernel install kernel-ml</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/1530331787.jpg" alt="1530331787(1)"></p>
-<h5 id="设置默认内核版本"><a href="#设置默认内核版本" class="headerlink" title="设置默认内核版本"></a>设置默认内核版本</h5><p>编辑/etc/default/grub 文件中的GRUB_DEFAULT 将值设置为0.意思是 GRUB 初始化页面的第一个内核将作为默认内核 </p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">GRUB_TIMEOUT=5</span><br><span class="line">GRUB_DEFAULT=0</span><br><span class="line">GRUB_DISABLE_SUBMENU=true</span><br><span class="line">GRUB_TERMINAL_OUTPUT="console"</span><br><span class="line">GRUB_CMDLINE_LINUX="rd.lvm.lv=centos/root rd.lvm.lv=centos/swap crashkernel=auto rhgb quiet"</span><br><span class="line">GRUB_DISABLE_RECOVERY="true"</span><br></pre></td></tr></table></figure>
-
-<p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/1530332090.jpg" alt="1530332090(1)"></p>
-<h5 id="重新创建内核配置"><a href="#重新创建内核配置" class="headerlink" title="重新创建内核配置"></a>重新创建内核配置</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> grub2-mkconfig -o /boot/grub2/grub.cfg</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="重启系统"><a href="#重启系统" class="headerlink" title="重启系统"></a>重启系统</h5><p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/1530332137.jpg" alt="1530332137(1)"></p>
-<h5 id="重新查看内核版本为最新内核版本"><a href="#重新查看内核版本为最新内核版本" class="headerlink" title="重新查看内核版本为最新内核版本"></a>重新查看内核版本为最新内核版本</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> uname -sr</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Centos7</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>bpmn工作流简述</title>
     <url>/blog/2020/11/09/BPMN%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%AE%80%E8%BF%B0/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
@@ -633,129 +441,195 @@
       </tags>
   </entry>
   <entry>
-    <title>EventLoop、MicroTasks and MacroTask</title>
-    <url>/blog/2019/04/03/EventLoop%E3%80%81Microtasks%20and%20task/</url>
-    <content><![CDATA[<p>本篇文章主要讲解一下<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>中的事件循环机制以及深入讲解异步任务中的宏任务和微任务。</p>
-<blockquote>
-<p>[1] 如果你在阅读中发现错误或者存在某些问题可以通过邮件的形式发送到作者的邮箱，再收到邮件后作者会及时处理这些问题。</p>
-<p>[2] 阅读文章你需要了解的专业术语有事件循环机制（EventLoop）、栈（Stack）、队列（Queue）、微任务（MicroTasks）、宏任务（MacroTask）、同步任务（Synchronous）、异步任务（Asynchronous）。</p>
-</blockquote>
-<hr>
-<h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><ul>
-<li>JavaScript是单进程的脚本语言；</li>
-<li>EventLoop是JavaScript中的事件循环机制（执行机制）；</li>
-<li>Stack栈是一种先进后出（FILO）的数据结构；</li>
-<li>Queue队列是一种先进先出（LILO）的数据结构；</li>
-<li>Synchronous是JavaScript中的同步任务；</li>
-<li>Asynchronous是JavaScript中的异步任务；</li>
-<li>MicroTasks是JavaScript异步中的微任务；</li>
-<li>MacroTask是JavaScript异步中的宏任务；</li>
-</ul>
-<hr>
-<h4 id="Stack-and-Queue"><a href="#Stack-and-Queue" class="headerlink" title="Stack and Queue"></a>Stack and Queue</h4><h5 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h5><p><code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Stack</code>和<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Queue</code>都是两种基本的数据结构，而常用的数据结构有八种，其余六种数据结构分别是：数组（Array）、散列表（Hash）、树（Tree）、链表（Linked List）、堆（Heap）、图（Graph）。</p>
-<h5 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h5><p><code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Stack</code>是一种先进后出（FILO）的数据结构，有且只有一个指向栈顶的指针，对栈的操作只能操作栈顶，不能操作栈底。<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Stack</code>是<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">EventLoop</code>在执行的上下文中将所有的函数以入栈和出栈的形式进行编排。所有种类函数在执行前进行入栈，执行后进行出栈，如果遇到异步函数操作，V8和JavaScript引擎会将其交给事件表和事件队列（在该环节不做过多解释，可在下一环节找到详细的解释）。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test_1</span>(<span class="params">a</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a * <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test_0</span>(<span class="params">b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> test_1(<span class="number">4</span>) * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(test_0(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+    <title>CentOS6.9下对MySQL5.7的用户权限管理</title>
+    <url>/blog/2018/04/17/CentOS6.9%E4%B8%8B%E5%AF%B9MySQL5.7%E7%9A%84%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<p>在实际开发中的很多情况下，我们不免要对数据库根据用户的不同进行权限的分配。在MySQL数据库中，基本有28种权限，我们可以将其归类成三大类的权限。</p>
+<h4 id="MySQL的权限分类"><a href="#MySQL的权限分类" class="headerlink" title="MySQL的权限分类"></a>MySQL的权限分类</h4><h5 id="一）数据操作类"><a href="#一）数据操作类" class="headerlink" title="一）数据操作类"></a>一）数据操作类</h5> <div class="table-responsive"><table class="table table-striped table-bordered table-hover"><tr><td>操作</td><td>含义</td></tr><tr><td>SELECT</td><td>查询权限</td></tr><tr><td>INSERT</td><td>插入权限</td></tr><tr><td>UPDATE</td><td>更新权限</td></tr><tr><td>DELETE</td><td>删除数据权限</td></tr><tr><td>FILE</td><td>文件访问权限</td></tr></table></div>
 
-<p>我们可以通过下面的图片去了解入栈和出栈的规则，当理解了栈的规则后，就可以很清晰的看出上面代码的输出结果。</p>
-<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/stack.gif" alt="栈的执行流程"></p>
-<h5 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h5><p><code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Queue</code>是一种先进先出（LILO）的数据结构，拥有一个指向队首和队尾的指针，队列既能操作队首也能操作队尾。</p>
-<hr>
-<h4 id="EventLoop"><a href="#EventLoop" class="headerlink" title="EventLoop"></a>EventLoop</h4><p>首先我们要知道<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>是单线程的。我们可以把单线程理解为一个自动售票机，购票者需要自觉排队购票，如果其中有一个购票者第一次使用自动售票机的情况下会因为不熟练而使得该购票者购票时间相对较长，无论该购票者用了多少时间，后面的人依旧要进行排队购票。</p>
-<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/1554278130031.jpg" alt="排队购票示例图"></p>
-<p>回归到浏览器和<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>本身，如果我们有一个新闻页面，如果需要加载大量的图片并且在图片没有完全加载出来的时候我们不能让浏览器卡着什么都不显示，所以就有人提出了<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Synchronous</code>和<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Asynchronous</code>。</p>
-<hr>
-<h4 id="Synchronous-and-Asynchronous"><a href="#Synchronous-and-Asynchronous" class="headerlink" title="Synchronous and Asynchronous"></a>Synchronous and Asynchronous</h4><h5 id="基本介绍-1"><a href="#基本介绍-1" class="headerlink" title="基本介绍"></a>基本介绍</h5><ul>
-<li>Synchronous（同步任务）包含：DOM，CSS，promise；</li>
-<li>Asynchronous（异步任务）包含：promise的then，setTimeout，setInterval等；</li>
-<li>Asynchronous（异步任务）进入事件表注册回调函数到事件队列，此队列是先进先出队列；</li>
-<li>JavaScript首先区分同步任务和异步任务，同步任务直接执行，异步任务进入事件表；</li>
-<li>JavaScript优先执行同步任务；</li>
-<li>进入到事件表的异步任务会注册回调函数到事件队列；</li>
-<li>当JavaScript执行完全部的同步任务后，会判断事件队列中是否有待执行的任务；</li>
-</ul>
-<h5 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h5><p>为了更清晰的解释同步和异步的执行，首先我们来看一段代码，通过代码进行理解：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'start'</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">  test()</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'test'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'end'</span>);</span><br><span class="line"><span class="comment">// 输出：start，end，setTimeout，test</span></span><br></pre></td></tr></table></figure>
+<h5 id="二）结构操作类"><a href="#二）结构操作类" class="headerlink" title="二）结构操作类"></a>二）结构操作类</h5><div class="table-responsive"><table class="table table-striped table-bordered table-hover"><tr><td>操作</td><td>含义</td></tr><tr><td>CREATE</td><td>创建数据库、表或索引权限</td></tr><tr><td>ALTER</td><td>更改表权限（添加字段或者索引等）</td></tr><tr><td>INDEX</td><td>索引权限</td></tr><tr><td>DROP</td><td>删除数据库或表权限</td></tr><tr><td>CREATE TEMPORARY TABLES</td><td>创建临时表权限</td></tr><tr><td>SHOW VIEW</td><td>查看视图权限</td></tr><tr><td>CREATE ROUTINE</td><td>创建存储过程权限</td></tr><tr><td>ALTER ROUTINE</td><td>更改存储过程权限</td></tr><tr><td>EXECUTE</td><td>执行存储过程权限</td></tr><tr><td>CREATE VIEW</td><td>创建视图权限</td></tr><tr><td>EVENT</td><td>可在数据下创建时间调度器权限</td></tr><tr><td>TRIGGER</td><td>可在数据下创建触发器权限</td></tr></table></div>
 
-<p>通过上面的代码会发现这和传统理解<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>是从上到下执行是相悖的，为此可以查看下面的流程图进行详细的流程分析。</p>
-<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/1554282142999.jpg" alt="同步异步执行示例图"></p>
-<hr>
-<h4 id="MicroTasks-and-Macrotask"><a href="#MicroTasks-and-Macrotask" class="headerlink" title="MicroTasks and Macrotask"></a>MicroTasks and Macrotask</h4><h5 id="基本介绍-2"><a href="#基本介绍-2" class="headerlink" title="基本介绍"></a>基本介绍</h5><ul>
-<li>MicroTasks（微任务）包括promise的then；</li>
-<li>Macrotask（宏任务）包括script、setTimeout、setInterval；</li>
-<li>MicroTasks（微任务）和Macrotask（宏任务）进入的是两个不同的事件队列；</li>
-<li>当Synchronous（同步任务）执行完毕后会去判断事件队列中是否有待执行的函数，如果有待执行的函数后要判断事件队列中是否有MicroTasks Queue（微任务队列）和Macrotask Queue（宏任务队列），如果存在则先执行MicroTasks Queue（微任务队列）中的函数；</li>
-</ul>
-<p>由于这是<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">EventLoop</code>中最细致的地方，所以下面会列举出比较常用的例子。</p>
-<h5 id="setTimeout"><a href="#setTimeout" class="headerlink" title="setTimeout"></a>setTimeout</h5><p>Synchronous（同步任务）完成后立即执行的setTimeout：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"><span class="comment">// 输出：setTimeout</span></span><br></pre></td></tr></table></figure>
+<h5 id="三）管理操作类"><a href="#三）管理操作类" class="headerlink" title="三）管理操作类"></a>三）管理操作类</h5><div class="table-responsive"><table class="table table-striped table-bordered table-hover"><tr><td>操作</td><td>含义</td></tr><tr><td>GRANT</td><td>赋予权限选项</td></tr><tr><td>SUPER</td><td>执行kill线程权限</td></tr><tr><td>PROCESS</td><td>查看进程权限</td></tr><tr><td>RELOAD</td><td>执行flush-hosts，flush-logs等权限</td></tr><tr><td>SHUTDOWN</td><td>创建临时表权限</td></tr><tr><td>SHOW DATABASES</td><td>关闭数据库权限</td></tr><tr><td>LOCK TABLES</td><td>可对其下所有表进行锁定权限</td></tr><tr><td>REFERENCES</td><td>未来MySQL特性的占位符</td></tr><tr><td>REPLICATION CLIENT</td><td>复制权限</td></tr><tr><td>REPLICATION SLAVE</td><td>复制权限</td></tr><tr><td>CREATE USER</td><td>创建用户权限</td></tr></table></div>
 
-<p>Synchronous（同步任务）完成后延迟立即执行的setTimeout：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">&#125;, <span class="number">5000</span>);</span><br><span class="line"><span class="comment">// 等待5s后输出：setTimeout</span></span><br></pre></td></tr></table></figure>
 
-<p><span style="color: red;">注：即使我们给setTimeout延迟5s执行，实际的环境中绝大多数是大于这个时间的，例如一个延迟一秒的setTimeout中有个ajax方法，setTimeout会等待ajax请求完毕后再去执行，这段期间即使超过一秒了，但是里面的ajax受网络环境影响并没有及时返回，这时setTimeout的延迟时间。</span></p>
-<h5 id="setInterval"><a href="#setInterval" class="headerlink" title="setInterval"></a>setInterval</h5><p>此函数与<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">setTimeout</code>相似，<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">setInterval</code>是每隔一段时间讲函数注入到事件表中，在判断是什么类型任务进入不同的事件队列。</p>
-<h5 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h5><p>promise的功能在此不再赘述，如果想详细了解可以阅读<a href="http://es6.ruanyifeng.com/#docs/promise" target="_blank" rel="noopener" style="color: blue">阮一峰ECMAScript 6 入门中的Promise 对象章节</a>。</p>
-<h5 id="代码示例-1"><a href="#代码示例-1" class="headerlink" title="代码示例"></a>代码示例</h5><p>宏任务和微任务进入不同队列且微任务优先执行：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout1'</span>)</span><br><span class="line">&#125;,<span class="number">0</span>)</span><br><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'promise1'</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;)</span><br><span class="line">p.then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'promise2'</span>)    </span><br><span class="line">&#125;)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout2'</span>)</span><br><span class="line">&#125;,<span class="number">0</span>)</span><br><span class="line"><span class="comment">// 输出：promise1，promise2，setTimeout1，setTimeout2</span></span><br></pre></td></tr></table></figure>
 
-<p>上面的代码的执行流程为：</p>
-<ol>
-<li>promise1为同步任务直接打印；</li>
-<li>promise2进入微任务队列；</li>
-<li>setTimeout1进入宏任务队列；</li>
-<li>setTimeout2进入宏任务队列；</li>
-<li>promise2打印（优先执行微任务）；</li>
-<li>setTimeout1打印；</li>
-<li>setTimeout2打印；</li>
-</ol>
-<p>嵌套任务：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'Promise1'</span>)  </span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setTimeout2'</span>)</span><br><span class="line">  &#125;,<span class="number">0</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout1'</span>)</span><br><span class="line">  <span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Promise2'</span>)    </span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,<span class="number">0</span>)</span><br><span class="line"><span class="comment">// 输出：Promise1，setTimeout1，Promise2，setTimeout2</span></span><br></pre></td></tr></table></figure>
+<h4 id="MySQL的权限操作（以root用户登录到数据库进行操作）"><a href="#MySQL的权限操作（以root用户登录到数据库进行操作）" class="headerlink" title="MySQL的权限操作（以root用户登录到数据库进行操作）"></a>MySQL的权限操作（以root用户登录到数据库进行操作）</h4><h5 id="一）创建用户"><a href="#一）创建用户" class="headerlink" title="一）创建用户"></a>一）创建用户</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> CREATE USER <span class="string">'username'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'password'</span>;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> CREATE USER <span class="string">'username1'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'password1'</span>;</span></span><br></pre></td></tr></table></figure>
 
-<p>上面的代码的执行流程为：</p>
-<ol>
-<li>promise1进入微任务队列；</li>
-<li>setTimeout1进入宏任务队列；</li>
-<li>打印promise1，setTimeout2进入宏任务队列；</li>
-<li>打印setTimeout1，promise2进入微任务队列；</li>
-<li>打印promise2；</li>
-<li>打印setTimeout2；</li>
-</ol>
-<hr>
-<h4 id="综合示例"><a href="#综合示例" class="headerlink" title="综合示例"></a>综合示例</h4><p>首先我们来看一段终极代码，了解完整的<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">EventLoop</code>执行流程：</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'1'</span>);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'2'</span>);</span><br><span class="line">	<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'3'</span>);</span><br><span class="line">		resolve();</span><br><span class="line">	&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'4'</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'5'</span>);</span><br><span class="line">	resolve();</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'6'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'7'</span>)</span><br><span class="line">	setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'8'</span>);</span><br><span class="line">		<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">'9'</span>);</span><br><span class="line">			resolve();</span><br><span class="line">		&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">'10'</span>)</span><br><span class="line">		&#125;)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'11'</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'12'</span>);</span><br><span class="line">test();</span><br><span class="line"><span class="comment">// 输出：1，5，12，7，6，2，3，4，8，9，11，10</span></span><br></pre></td></tr></table></figure>
+<p>注：</p>
+<p>username为用户名</p>
+<p>password为用户密码</p>
+<p>localhost只允许在本机登录数据库</p>
+<p>%任何一台电脑上都可以远程登陆</p>
+<h5 id="二）受理权限"><a href="#二）受理权限" class="headerlink" title="二）受理权限"></a>二）受理权限</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> GRANT privileges ON databasename.tablename TO <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
 
-<hr>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>当<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>开始执行时候会将所有函数押入执行栈，其中同步任务按序执行，异步任务加入事件表，事件表把函数分为宏任务和微任务将其回调函数分别压入不同的事件队列。当同步任务执行完毕后，引擎会检查是否存在异步任务，如果不存在则程序结束。如果存在判断是否有微任务，没有的情况下直接执行宏任务队列，有微任务的情况下，优先执行微任务队列里面的函数。</p>
-<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/1554364051301.jpg" alt="终极图片"></p>
-]]></content>
+<p>注：</p>
+<p>privileges为用户操作权限，例如select等，如果需要所有权限直接写all</p>
+<p>databasename为数据库名，给某个用户访问某个数据库的权限，如果给某个用户所有库的访问权限可以用*表示</p>
+<p>tablename为表名，如果为某个库下的所有表可以用*号表示</p>
+<h5 id="三）撤销用户权限"><a href="#三）撤销用户权限" class="headerlink" title="三）撤销用户权限"></a>三）撤销用户权限</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> REVOKE privilege ON databasename.tablename FROM <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="四）删除账号及权限"><a href="#四）删除账号及权限" class="headerlink" title="四）删除账号及权限"></a>四）删除账号及权限</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> REVOKE privilege ON databasename.tablename FROM <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="五）查看用户的权限信息"><a href="#五）查看用户的权限信息" class="headerlink" title="五）查看用户的权限信息"></a>五）查看用户的权限信息</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> SHOW GRANTS FOR <span class="string">'username'</span>@<span class="string">'localhost'</span>;</span></span><br></pre></td></tr></table></figure>
+<h5 id="六）刷新权限操作"><a href="#六）刷新权限操作" class="headerlink" title="六）刷新权限操作"></a>六）刷新权限操作</h5><p>这里我需要着重的强调一下，如果使用delete对数据库用户删除后需要执行一遍刷新flush privileges;否则会报有1396错误；建议还是使用drop等相关命令进行做删除用户操作。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> flush privileges;</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>WEB前端</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>JavaScript</tag>
-        <tag>EventLoop</tag>
-        <tag>Stack</tag>
-        <tag>Queue</tag>
-        <tag>Synchronous</tag>
-        <tag>Asynchronous</tag>
-        <tag>MicroTasks</tag>
-        <tag>MacroTask</tag>
+        <tag>CentOS6.9</tag>
+        <tag>MySQL5.7</tag>
+        <tag>MySQL权限分类</tag>
+        <tag>MySQL5.7权限分配</tag>
       </tags>
   </entry>
   <entry>
-    <title>Git代理</title>
-    <url>/blog/2018/12/09/Git%E4%BB%A3%E7%90%86/</url>
-    <content><![CDATA[<p>很多时候我们进行git clone的速度会很慢，为此我们可以通过代理的方式提高git的速度。</p>
-<h5 id="设置http代理"><a href="#设置http代理" class="headerlink" title="设置http代理"></a>设置http代理</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global https.proxy http://127.0.0.1:1080</span><br><span class="line">git config --global https.proxy https://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+    <title>CentOS7定时清理buff/cache内存占用过高</title>
+    <url>/blog/2018/03/20/CentOS7%E5%AE%9A%E6%97%B6%E6%B8%85%E7%90%86buffcache%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/</url>
+    <content><![CDATA[<p>最近因为公司事物过多，没有时间去更新博客，今天在查看自己博客的时候发现，应该对之前的一片文章<a href="http://120.79.151.66:4000/2018/02/06/buffcache%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/" target="_blank" rel="noopener">buff / cache内存占用过高</a>进行更深度的讲解，以及通过定时任务，解放人为清理的麻烦。</p>
+<p>首先，在linux系统中想到自动化处理任务，无疑就是crontab，crontab就是linux系统中的自动化处理的程序，在默认的情况下，系统是自带crontab程序的，只是处于关闭状态，但是本篇文章依旧为大家提供crontab的安装方式。</p>
+<p>1.安装crontab</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum install vixie-cron</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> yum install crontabs</span></span><br></pre></td></tr></table></figure>
 
-<h5 id="设置socks5代理"><a href="#设置socks5代理" class="headerlink" title="设置socks5代理"></a>设置socks5代理</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy 'socks5://127.0.0.1:1080' </span><br><span class="line">git config --global https.proxy 'socks5://127.0.0.1:1080'</span><br></pre></td></tr></table></figure>
+<p>2.查看crond.service的服务自启动状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl is-enabled crond.service</span></span><br><span class="line">disabled</span><br></pre></td></tr></table></figure>
 
-<h5 id="取消代理"><a href="#取消代理" class="headerlink" title="取消代理"></a>取消代理</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global --unset http.proxy</span><br><span class="line">git config --global --unset https.proxy</span><br></pre></td></tr></table></figure>]]></content>
+<p>3.使crond.service的服务在开机时自启动</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl <span class="built_in">enable</span> crond.service</span></span><br></pre></td></tr></table></figure>
+
+<p>4.再次查看crond.service的服务自启动状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl is-enabled crond.service</span></span><br><span class="line">enabled</span><br></pre></td></tr></table></figure>
+
+<p>5.其他关于crond.service操作的基本命令</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl start crond.service // 启动</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl stop crond.service // 关闭</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl restart crond.service // 重启</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl reload crond.service // 重新载入配置</span></span><br></pre></td></tr></table></figure>
+
+<p>6.crontab文件格式</p>
+<p><img src="/blog/images/images/CentOS7%E5%AE%9A%E6%97%B6%E6%B8%85%E7%90%86buffcache%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E8%BF%87%E9%AB%98/%E6%9F%A5%E7%9C%8Bcrontab%E8%A7%84%E5%88%99.png" alt="查看crontab规则"></p>
+<p>7.crontab的特殊字符</p>
+<blockquote>
+<p>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。</p>
+<p>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”。</p>
+<p>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”。</p>
+<p>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
+</blockquote>
+<p>8.接下来我们要创建一个shell脚本，里面存放一个清除buff / cache的命令，通过让crontab在什么时间去执行这个shell脚本，而实现定时清理的任务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vim /home/automaticallyCleanUpMemory.sh</span></span><br></pre></td></tr></table></figure>
+
+<p>9.在文件中写入清理buff / cache的命令，推出保存</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">echo 3 &gt; /proc/sys/vm/drop_caches</span><br></pre></td></tr></table></figure>
+
+<p>10.定时任务相关操作</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> crontab -e // 创建一个定时任务</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> crontab -l // 列出当前用户的定时任务</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> crontab -r // 删除当前用户的定时任务</span></span><br></pre></td></tr></table></figure>
+
+<p>11.创建一个定时任务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> crontab -e</span></span><br></pre></td></tr></table></figure>
+
+<p>12.将什么时候执行什么任务写在任务中</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">0 4 * * * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每天早上四点执行一次automaticallyCleanUpMemory.sh脚本</span><br></pre></td></tr></table></figure>
+
+<p>到这里我们的自动清理buff / cache内存的方法就介绍完了，接下来介绍一些相关的其他操作示例</p>
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">* * * * * /home/automaticallyCleanUpMemory.sh </span><br><span class="line">// 每一分钟执行一次</span><br><span class="line">10,15 * * * * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每小时的第十分钟和第十五分钟执行一次</span><br><span class="line">15 8 * * * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每天早上八点十五执行一次</span><br><span class="line">15 8 1 jan * /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 一月一号的早上八点十五执行一次</span><br><span class="line">0 6 * * 6 /home/automaticallyCleanUpMemory.sh</span><br><span class="line">// 每个星期六的早上六点执行一次</span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
-        <category>Git</category>
+        <category>Linux</category>
       </categories>
       <tags>
-        <tag>git</tag>
+        <tag>crontab</tag>
+        <tag>buff/cache</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Centos6.9安装MySQL5.7，以及数据库迁移</title>
+    <url>/blog/2018/03/05/Centos6.9%E5%AE%89%E8%A3%85MySQL5.7/</url>
+    <content><![CDATA[<p>身为一名佛系程序员，在一个佛系公司上班，真是身不由己，一切随缘。这不因为公司没有运维我又干起了运维的活，这次主要是介绍一下如何在Centos6.9环境下安装MySQL5.7。这时候就有小伙伴问了，为什么要用Centos6.9不用7.4呢，说起来都是泪啊，公司没几个会的啊，我倒是想用7.4，泪奔。</p>
+<p>（一）下载四个软件包到/home下（可以自己选择下载路径）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-client-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-common-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-libs-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-community-server-5.7.18-1.el6.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
+
+<p>（二）检查mysql rpm相关的包是否安装并去除</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm -qa | grep -i mysql</span></span><br><span class="line">mysql-libs-5.1.73-8.el6_8.x86_64</span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -e mysql-libs-5.1.73-8.el6_8.x86_64</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> yum remove -y mysql-libs // 删除依赖包</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -qa | grep -i mysql // 在此查询如果没有信息显示则表示删除成功</span></span><br></pre></td></tr></table></figure>
+
+<p>（三）同时安装这四个rpm包</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm -ivh mysql-community-client-5.7.18-1.el6.x86_64.rpm mysql-community-common-5.7.18-1.el6.x86_64.rpm mysql-community-libs-5.7.18-1.el6.x86_64.rpm mysql-community-server-5.7.18-1.el6.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
+
+<p>（四）如果安装时提示缺少依赖执行numactl的安装</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm -ivh mysql-community-client-5.7.18-1.el6.x86_64.rpm mysql-community-common-5.7.18-1.el6.x86_64.rpm mysql-community-libs-5.7.18-1.el6.x86_64.rpm mysql-community-server-5.7.18-1.el6.x86_64.rpm</span></span><br><span class="line">warning: mysql-community-client-5.7.18-1.el6.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEY</span><br><span class="line">error: Failed dependencies:</span><br><span class="line">libnuma.so.1()(64bit) is needed by mysql-community-server-5.7.18-1.el6.x86_64</span><br><span class="line">libnuma.so.1(libnuma_1.1)(64bit) is needed by mysql-community-server-5.7.18-1.el6.x86_64</span><br><span class="line">libnuma.so.1(libnuma_1.2)(64bit) is needed by mysql-community-server-5.7.18-1.el6.x86_64</span><br><span class="line"><span class="meta">#</span><span class="bash"> yum install -y numactl</span></span><br></pre></td></tr></table></figure>
+
+<p>到这里，基本的安装就已经完成了，接下来我们要对数据库进行基本的设置，通过基本设置后我们会进行数据的迁移工作。</p>
+<p>（一）首先停止掉MySQL的服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> service mysqld stop</span></span><br></pre></td></tr></table></figure>
+
+<p>（二）跳过MySQL密码认证，在[mysqld]后面任意一行添加“skip-grant-tables”用来跳过密码验证的过程</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vim /etc/my.cnf</span></span><br></pre></td></tr></table></figure>
+
+<p>（三）重新启动MySQL服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> service mysqld start</span></span><br></pre></td></tr></table></figure>
+
+<p>（四）重启后通过mysql命令即可进入到数据库中</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mysql</span></span><br></pre></td></tr></table></figure>
+
+<p>（五）使用sql修改数据库的密码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> use mysql; // 使用这个数据库</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> update user <span class="built_in">set</span> password=password(<span class="string">"你的新密码"</span>) <span class="built_in">where</span> user=<span class="string">"root"</span>; // 设置密码</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> flush privileges; // 立即生效</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> quit // 退出数据库</span></span><br></pre></td></tr></table></figure>
+
+<p>（六）去掉配置文件中的“skip-grant-tables”，并且重启MySQL服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> service mysqld restart</span></span><br></pre></td></tr></table></figure>
+
+<p>在配置完数据库的基本设置后，就要进行数据库的数据搬迁，首先要准备两个数据库，我这里用的是公司的两台数据库服务器。</p>
+<p>原有数据库服务器：10.2.8.123</p>
+<p>新的数据库服务器：10.2.8.128</p>
+<p>（一）在原有数据库服务器上操作，讲数据和表结构导出成sql文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mysqldump -uroot -p dbname &gt; /home/dbname .sql // 导出数据和表结构</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> mysqldump -uroot -p -d dbname &gt; dbname .sql // 只导出表结构</span></span><br></pre></td></tr></table></figure>
+
+<p>（二）在新的数据库服务器上操作，讲原有服务器上备份的sql文件复制到新服务器上（注：如果没有配置ssh免密登录，在执行如下命令时会提示输入密码，如果想跳过此步骤，请参考<a href="http://120.79.151.66:4000/2018/02/28/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B9%8B%E9%97%B4%E8%BF%9C%E7%A8%8B%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E5%8F%8A%E6%96%87%E4%BB%B6%E5%A4%B9/" target="_blank" rel="noopener">ssh免密登录</a>）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> scp root@10.2.8.123:/home/dbname.sql /home</span></span><br></pre></td></tr></table></figure>
+
+<p>（三）在新机器上导入拷贝过来的sql</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> create database dbname; // 创建数据库</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> use dbname; // 使用数据库</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> <span class="built_in">set</span> names utf8; // 设置数据库编码格式</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> <span class="built_in">source</span> /home/dbname.sql; // 把sql文件导入到数据库</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>MySQL5.7</tag>
+        <tag>Centos6.9</tag>
+        <tag>数据库迁移</tag>
+        <tag>scp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Centos7升级内核</title>
+    <url>/blog/2018/06/30/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/</url>
+    <content><![CDATA[<p>内核主要有两种作用：</p>
+<p>1.作为硬件和系统上运行的软件之间的接口；</p>
+<p>2.尽可能地高效管理资源；</p>
+<p>为此，内核通过内置的驱动程序或以后可作为模块安装的驱动程序与硬件通信。 </p>
+<p>例如，当你计算机上运行的程序想要连接到无线网络时，它会将该请求提交给内核，后者又会使用正确的驱动程序连接到网络。 </p>
+<p>随着新的设备和技术定期出来，如果我们想充分利用它们，保持最新的内核就很重要。此外，更新内核将帮助我们利用新的内核函数，并保护自己免受先前版本中发现的漏洞的攻击。 </p>
+<p style="color: red;">*这篇文章的方式支持发行版本种Centos7系统上进行操作</p>
+
+<h5 id="检查已安装的内核版本"><a href="#检查已安装的内核版本" class="headerlink" title="检查已安装的内核版本"></a>检查已安装的内核版本</h5><p>当前我的系统内核版本为Linux 3.10.0-862.3.3.el7.x86_64</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> uname -sr</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/666.png" alt="666"></p>
+<h5 id="在系统中启用ELRepo第三方库"><a href="#在系统中启用ELRepo第三方库" class="headerlink" title="在系统中启用ELRepo第三方库"></a>在系统中启用ELRepo第三方库</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="列出可用的内核相关包"><a href="#列出可用的内核相关包" class="headerlink" title="列出可用的内核相关包"></a>列出可用的内核相关包</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum --disablerepo=<span class="string">"*"</span> --enablerepo=<span class="string">"elrepo-kernel"</span> list available</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="安装最新的主线稳定内核"><a href="#安装最新的主线稳定内核" class="headerlink" title="安装最新的主线稳定内核"></a>安装最新的主线稳定内核</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum --enablerepo=elrepo-kernel install kernel-ml</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/1530331787.jpg" alt="1530331787(1)"></p>
+<h5 id="设置默认内核版本"><a href="#设置默认内核版本" class="headerlink" title="设置默认内核版本"></a>设置默认内核版本</h5><p>编辑/etc/default/grub 文件中的GRUB_DEFAULT 将值设置为0.意思是 GRUB 初始化页面的第一个内核将作为默认内核 </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">GRUB_TIMEOUT=5</span><br><span class="line">GRUB_DEFAULT=0</span><br><span class="line">GRUB_DISABLE_SUBMENU=true</span><br><span class="line">GRUB_TERMINAL_OUTPUT="console"</span><br><span class="line">GRUB_CMDLINE_LINUX="rd.lvm.lv=centos/root rd.lvm.lv=centos/swap crashkernel=auto rhgb quiet"</span><br><span class="line">GRUB_DISABLE_RECOVERY="true"</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/1530332090.jpg" alt="1530332090(1)"></p>
+<h5 id="重新创建内核配置"><a href="#重新创建内核配置" class="headerlink" title="重新创建内核配置"></a>重新创建内核配置</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> grub2-mkconfig -o /boot/grub2/grub.cfg</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="重启系统"><a href="#重启系统" class="headerlink" title="重启系统"></a>重启系统</h5><p><img src="/blog/images/Centos7%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/1530332137.jpg" alt="1530332137(1)"></p>
+<h5 id="重新查看内核版本为最新内核版本"><a href="#重新查看内核版本为最新内核版本" class="headerlink" title="重新查看内核版本为最新内核版本"></a>重新查看内核版本为最新内核版本</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> uname -sr</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Centos7</tag>
       </tags>
   </entry>
   <entry>
@@ -1122,6 +996,132 @@
       </tags>
   </entry>
   <entry>
+    <title>EventLoop、MicroTasks and MacroTask</title>
+    <url>/blog/2019/04/03/EventLoop%E3%80%81Microtasks%20and%20task/</url>
+    <content><![CDATA[<p>本篇文章主要讲解一下<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>中的事件循环机制以及深入讲解异步任务中的宏任务和微任务。</p>
+<blockquote>
+<p>[1] 如果你在阅读中发现错误或者存在某些问题可以通过邮件的形式发送到作者的邮箱，再收到邮件后作者会及时处理这些问题。</p>
+<p>[2] 阅读文章你需要了解的专业术语有事件循环机制（EventLoop）、栈（Stack）、队列（Queue）、微任务（MicroTasks）、宏任务（MacroTask）、同步任务（Synchronous）、异步任务（Asynchronous）。</p>
+</blockquote>
+<hr>
+<h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><ul>
+<li>JavaScript是单进程的脚本语言；</li>
+<li>EventLoop是JavaScript中的事件循环机制（执行机制）；</li>
+<li>Stack栈是一种先进后出（FILO）的数据结构；</li>
+<li>Queue队列是一种先进先出（LILO）的数据结构；</li>
+<li>Synchronous是JavaScript中的同步任务；</li>
+<li>Asynchronous是JavaScript中的异步任务；</li>
+<li>MicroTasks是JavaScript异步中的微任务；</li>
+<li>MacroTask是JavaScript异步中的宏任务；</li>
+</ul>
+<hr>
+<h4 id="Stack-and-Queue"><a href="#Stack-and-Queue" class="headerlink" title="Stack and Queue"></a>Stack and Queue</h4><h5 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h5><p><code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Stack</code>和<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Queue</code>都是两种基本的数据结构，而常用的数据结构有八种，其余六种数据结构分别是：数组（Array）、散列表（Hash）、树（Tree）、链表（Linked List）、堆（Heap）、图（Graph）。</p>
+<h5 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h5><p><code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Stack</code>是一种先进后出（FILO）的数据结构，有且只有一个指向栈顶的指针，对栈的操作只能操作栈顶，不能操作栈底。<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Stack</code>是<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">EventLoop</code>在执行的上下文中将所有的函数以入栈和出栈的形式进行编排。所有种类函数在执行前进行入栈，执行后进行出栈，如果遇到异步函数操作，V8和JavaScript引擎会将其交给事件表和事件队列（在该环节不做过多解释，可在下一环节找到详细的解释）。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test_1</span>(<span class="params">a</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a * <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test_0</span>(<span class="params">b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> test_1(<span class="number">4</span>) * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(test_0(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过下面的图片去了解入栈和出栈的规则，当理解了栈的规则后，就可以很清晰的看出上面代码的输出结果。</p>
+<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/stack.gif" alt="栈的执行流程"></p>
+<h5 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h5><p><code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Queue</code>是一种先进先出（LILO）的数据结构，拥有一个指向队首和队尾的指针，队列既能操作队首也能操作队尾。</p>
+<hr>
+<h4 id="EventLoop"><a href="#EventLoop" class="headerlink" title="EventLoop"></a>EventLoop</h4><p>首先我们要知道<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>是单线程的。我们可以把单线程理解为一个自动售票机，购票者需要自觉排队购票，如果其中有一个购票者第一次使用自动售票机的情况下会因为不熟练而使得该购票者购票时间相对较长，无论该购票者用了多少时间，后面的人依旧要进行排队购票。</p>
+<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/1554278130031.jpg" alt="排队购票示例图"></p>
+<p>回归到浏览器和<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>本身，如果我们有一个新闻页面，如果需要加载大量的图片并且在图片没有完全加载出来的时候我们不能让浏览器卡着什么都不显示，所以就有人提出了<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Synchronous</code>和<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">Asynchronous</code>。</p>
+<hr>
+<h4 id="Synchronous-and-Asynchronous"><a href="#Synchronous-and-Asynchronous" class="headerlink" title="Synchronous and Asynchronous"></a>Synchronous and Asynchronous</h4><h5 id="基本介绍-1"><a href="#基本介绍-1" class="headerlink" title="基本介绍"></a>基本介绍</h5><ul>
+<li>Synchronous（同步任务）包含：DOM，CSS，promise；</li>
+<li>Asynchronous（异步任务）包含：promise的then，setTimeout，setInterval等；</li>
+<li>Asynchronous（异步任务）进入事件表注册回调函数到事件队列，此队列是先进先出队列；</li>
+<li>JavaScript首先区分同步任务和异步任务，同步任务直接执行，异步任务进入事件表；</li>
+<li>JavaScript优先执行同步任务；</li>
+<li>进入到事件表的异步任务会注册回调函数到事件队列；</li>
+<li>当JavaScript执行完全部的同步任务后，会判断事件队列中是否有待执行的任务；</li>
+</ul>
+<h5 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h5><p>为了更清晰的解释同步和异步的执行，首先我们来看一段代码，通过代码进行理解：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'start'</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">  test()</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'test'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'end'</span>);</span><br><span class="line"><span class="comment">// 输出：start，end，setTimeout，test</span></span><br></pre></td></tr></table></figure>
+
+<p>通过上面的代码会发现这和传统理解<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>是从上到下执行是相悖的，为此可以查看下面的流程图进行详细的流程分析。</p>
+<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/1554282142999.jpg" alt="同步异步执行示例图"></p>
+<hr>
+<h4 id="MicroTasks-and-Macrotask"><a href="#MicroTasks-and-Macrotask" class="headerlink" title="MicroTasks and Macrotask"></a>MicroTasks and Macrotask</h4><h5 id="基本介绍-2"><a href="#基本介绍-2" class="headerlink" title="基本介绍"></a>基本介绍</h5><ul>
+<li>MicroTasks（微任务）包括promise的then；</li>
+<li>Macrotask（宏任务）包括script、setTimeout、setInterval；</li>
+<li>MicroTasks（微任务）和Macrotask（宏任务）进入的是两个不同的事件队列；</li>
+<li>当Synchronous（同步任务）执行完毕后会去判断事件队列中是否有待执行的函数，如果有待执行的函数后要判断事件队列中是否有MicroTasks Queue（微任务队列）和Macrotask Queue（宏任务队列），如果存在则先执行MicroTasks Queue（微任务队列）中的函数；</li>
+</ul>
+<p>由于这是<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">EventLoop</code>中最细致的地方，所以下面会列举出比较常用的例子。</p>
+<h5 id="setTimeout"><a href="#setTimeout" class="headerlink" title="setTimeout"></a>setTimeout</h5><p>Synchronous（同步任务）完成后立即执行的setTimeout：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"><span class="comment">// 输出：setTimeout</span></span><br></pre></td></tr></table></figure>
+
+<p>Synchronous（同步任务）完成后延迟立即执行的setTimeout：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>)</span><br><span class="line">&#125;, <span class="number">5000</span>);</span><br><span class="line"><span class="comment">// 等待5s后输出：setTimeout</span></span><br></pre></td></tr></table></figure>
+
+<p><span style="color: red;">注：即使我们给setTimeout延迟5s执行，实际的环境中绝大多数是大于这个时间的，例如一个延迟一秒的setTimeout中有个ajax方法，setTimeout会等待ajax请求完毕后再去执行，这段期间即使超过一秒了，但是里面的ajax受网络环境影响并没有及时返回，这时setTimeout的延迟时间。</span></p>
+<h5 id="setInterval"><a href="#setInterval" class="headerlink" title="setInterval"></a>setInterval</h5><p>此函数与<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">setTimeout</code>相似，<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">setInterval</code>是每隔一段时间讲函数注入到事件表中，在判断是什么类型任务进入不同的事件队列。</p>
+<h5 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h5><p>promise的功能在此不再赘述，如果想详细了解可以阅读<a href="http://es6.ruanyifeng.com/#docs/promise" target="_blank" rel="noopener" style="color: blue">阮一峰ECMAScript 6 入门中的Promise 对象章节</a>。</p>
+<h5 id="代码示例-1"><a href="#代码示例-1" class="headerlink" title="代码示例"></a>代码示例</h5><p>宏任务和微任务进入不同队列且微任务优先执行：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout1'</span>)</span><br><span class="line">&#125;,<span class="number">0</span>)</span><br><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'promise1'</span>)</span><br><span class="line">  resolve()</span><br><span class="line">&#125;)</span><br><span class="line">p.then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'promise2'</span>)    </span><br><span class="line">&#125;)</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout2'</span>)</span><br><span class="line">&#125;,<span class="number">0</span>)</span><br><span class="line"><span class="comment">// 输出：promise1，promise2，setTimeout1，setTimeout2</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的代码的执行流程为：</p>
+<ol>
+<li>promise1为同步任务直接打印；</li>
+<li>promise2进入微任务队列；</li>
+<li>setTimeout1进入宏任务队列；</li>
+<li>setTimeout2进入宏任务队列；</li>
+<li>promise2打印（优先执行微任务）；</li>
+<li>setTimeout1打印；</li>
+<li>setTimeout2打印；</li>
+</ol>
+<p>嵌套任务：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'Promise1'</span>)  </span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setTimeout2'</span>)</span><br><span class="line">  &#125;,<span class="number">0</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout1'</span>)</span><br><span class="line">  <span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Promise2'</span>)    </span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,<span class="number">0</span>)</span><br><span class="line"><span class="comment">// 输出：Promise1，setTimeout1，Promise2，setTimeout2</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的代码的执行流程为：</p>
+<ol>
+<li>promise1进入微任务队列；</li>
+<li>setTimeout1进入宏任务队列；</li>
+<li>打印promise1，setTimeout2进入宏任务队列；</li>
+<li>打印setTimeout1，promise2进入微任务队列；</li>
+<li>打印promise2；</li>
+<li>打印setTimeout2；</li>
+</ol>
+<hr>
+<h4 id="综合示例"><a href="#综合示例" class="headerlink" title="综合示例"></a>综合示例</h4><p>首先我们来看一段终极代码，了解完整的<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">EventLoop</code>执行流程：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'1'</span>);</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'2'</span>);</span><br><span class="line">	<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'3'</span>);</span><br><span class="line">		resolve();</span><br><span class="line">	&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'4'</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'5'</span>);</span><br><span class="line">	resolve();</span><br><span class="line">&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'6'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">'7'</span>)</span><br><span class="line">	setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'8'</span>);</span><br><span class="line">		<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">'9'</span>);</span><br><span class="line">			resolve();</span><br><span class="line">		&#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">'10'</span>)</span><br><span class="line">		&#125;)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'11'</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'12'</span>);</span><br><span class="line">test();</span><br><span class="line"><span class="comment">// 输出：1，5，12，7，6，2，3，4，8，9，11，10</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>当<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">JavaScript</code>开始执行时候会将所有函数押入执行栈，其中同步任务按序执行，异步任务加入事件表，事件表把函数分为宏任务和微任务将其回调函数分别压入不同的事件队列。当同步任务执行完毕后，引擎会检查是否存在异步任务，如果不存在则程序结束。如果存在判断是否有微任务，没有的情况下直接执行宏任务队列，有微任务的情况下，优先执行微任务队列里面的函数。</p>
+<p><img src="/blog/images/EventLoop%E3%80%81Microtasks%20and%20task/1554364051301.jpg" alt="终极图片"></p>
+]]></content>
+      <categories>
+        <category>WEB前端</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+        <tag>EventLoop</tag>
+        <tag>Stack</tag>
+        <tag>Queue</tag>
+        <tag>Synchronous</tag>
+        <tag>Asynchronous</tag>
+        <tag>MicroTasks</tag>
+        <tag>MacroTask</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git代理</title>
+    <url>/blog/2018/12/09/Git%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<p>很多时候我们进行git clone的速度会很慢，为此我们可以通过代理的方式提高git的速度。</p>
+<h5 id="设置http代理"><a href="#设置http代理" class="headerlink" title="设置http代理"></a>设置http代理</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global https.proxy http://127.0.0.1:1080</span><br><span class="line">git config --global https.proxy https://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+
+<h5 id="设置socks5代理"><a href="#设置socks5代理" class="headerlink" title="设置socks5代理"></a>设置socks5代理</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy 'socks5://127.0.0.1:1080' </span><br><span class="line">git config --global https.proxy 'socks5://127.0.0.1:1080'</span><br></pre></td></tr></table></figure>
+
+<h5 id="取消代理"><a href="#取消代理" class="headerlink" title="取消代理"></a>取消代理</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global --unset http.proxy</span><br><span class="line">git config --global --unset https.proxy</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git分支的内部运行机制</title>
     <url>/blog/2018/06/07/Git%E5%88%86%E6%94%AF%E7%9A%84%E5%86%85%E9%83%A8%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<p>首先我们在深入了解git分支工作原理之前，要了解一下git时间线的概念。</p>
@@ -1164,6 +1164,39 @@
       </tags>
   </entry>
   <entry>
+    <title>Git常用命令以及创建新分支并在新分支进行开发</title>
+    <url>/blog/2018/06/07/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BB%A5%E5%8F%8A%E5%88%9B%E5%BB%BA%E6%96%B0%E5%88%86%E6%94%AF%E5%B9%B6%E5%9C%A8%E6%96%B0%E5%88%86%E6%94%AF%E8%BF%9B%E8%A1%8C%E5%BC%80%E5%8F%91/</url>
+    <content><![CDATA[<p>这些天因为自己新项目的原因要进行分支的操作，为此想到了博客中还有关于git方面的文章。为此，我在这里详细的介绍下关于git分支的操作。</p>
+<p>关于git分支在实际开发中的应用还是很广泛的。普遍来讲，各个公司都不会允许所有码农将代码直接提交到主分支（master）上，主分支只作为为所有码农下载项目（pull）使用。</p>
+<p>那么，我们无法将自己写的代码直接提交到master上，应该怎么办。最通常的方式就是将项目从master上pull下来，然后创建一个自己名字命名的分支，然后我们把修改的项目提交到自己的分支上，再有项目经理或者以上级别的人进行分支合并，将所有人的分支合并到master上。这样其他人在pull master的时候就能更新到除了自己以外所有人的代码。</p>
+<p>由于前几两篇关于git的文章我并没有对git常用命令进行讲解，所以在操作分支的时候各位也应该是对master push pull有所了解了。</p>
+<h5 id="git常用命令"><a href="#git常用命令" class="headerlink" title="git常用命令"></a>git常用命令</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git rm 文件名 <span class="comment"># 删除本地git仓库文件，提交后远程服务器上的文件会被删除</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git status <span class="comment"># 查看状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git add 文件名 <span class="comment"># 添加记录</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git add * <span class="comment"># 添加所有文件</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">"描述此次提交的内容"</span> <span class="comment"># 添加描述</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull origin master <span class="comment"># 从主分支同步数据</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git push origin master <span class="comment"># 提交数据到主分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch <span class="comment"># 查看分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch 分支名 <span class="comment"># 创建分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout 分支名 <span class="comment"># 切换分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b 分支名 <span class="comment"># 创建+切换分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -d 分支名 <span class="comment"># 删除分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -D 分支名 <span class="comment"># 强制删除分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git push origin :分支名 <span class="comment"># 删除远程分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout --file <span class="comment"># 撤销修改</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge 分支名 <span class="comment"># 合并某分支到当前分支</span></span></span><br></pre></td></tr></table></figure>
+
+<p>那么，介绍完了常用命令之后，我们应该如何新建分支进行工作</p>
+<h5 id="选择master-pull或者新项目直接git-clone默认master"><a href="#选择master-pull或者新项目直接git-clone默认master" class="headerlink" title="选择master pull或者新项目直接git clone默认master"></a>选择master pull或者新项目直接git clone默认master</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="创建分支"><a href="#创建分支" class="headerlink" title="创建分支"></a>创建分支</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b dev</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="将新建的分支push到远端"><a href="#将新建的分支push到远端" class="headerlink" title="将新建的分支push到远端"></a>将新建的分支push到远端</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git push origin dev</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="拉取远端分支"><a href="#拉取远端分支" class="headerlink" title="拉取远端分支"></a>拉取远端分支</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git pull</span></span><br><span class="line"></span><br><span class="line">There is no tracking information for the current branch.</span><br><span class="line">Please specify which branch you want to merge with.</span><br><span class="line">See git-pull(1) for details.</span><br><span class="line"></span><br><span class="line">git pull &lt;remote&gt; &lt;branch&gt;</span><br><span class="line"></span><br><span class="line">If you wish to set tracking information for this branch you can do so with:</span><br><span class="line"></span><br><span class="line">git branch --set-upstream-to=origin/&lt;branch&gt; dev</span><br><span class="line"><span class="meta">#</span><span class="bash"> 当前分支并没有和本地分支关联</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="关联分支"><a href="#关联分支" class="headerlink" title="关联分支"></a>关联分支</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git branch--<span class="built_in">set</span>-upstream-to=origin/dev</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="再次拉取"><a href="#再次拉取" class="headerlink" title="再次拉取"></a>再次拉取</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git pull</span></span><br></pre></td></tr></table></figure>
+
+<p>有关git分支内部工作原理的信息，请查看<a href="http://www.songjian.site:4000/2018/06/07/Git%E5%88%86%E6%94%AF%E7%9A%84%E5%86%85%E9%83%A8%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6/" target="_blank" rel="noopener">Git分支的内部运行机制</a></p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+        <tag>git checkout</tag>
+        <tag>git branch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git配置ssh公钥</title>
     <url>/blog/2018/05/10/Git%E9%85%8D%E7%BD%AEssh%E5%85%AC%E9%92%A5/</url>
     <content><![CDATA[<p>最近有人希望我对git做一些介绍，为此我特意开出一个大的分类专门记录一些git方向的基本操作和错误总结。而基本的如何去注册、登录git这样的操作也没有什么必要去讲，所以第一篇关于git方向的文章我打算讲一下如何去通过git bash去配置git的ssh公钥。</p>
@@ -1197,39 +1230,6 @@
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git常用命令以及创建新分支并在新分支进行开发</title>
-    <url>/blog/2018/06/07/Git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BB%A5%E5%8F%8A%E5%88%9B%E5%BB%BA%E6%96%B0%E5%88%86%E6%94%AF%E5%B9%B6%E5%9C%A8%E6%96%B0%E5%88%86%E6%94%AF%E8%BF%9B%E8%A1%8C%E5%BC%80%E5%8F%91/</url>
-    <content><![CDATA[<p>这些天因为自己新项目的原因要进行分支的操作，为此想到了博客中还有关于git方面的文章。为此，我在这里详细的介绍下关于git分支的操作。</p>
-<p>关于git分支在实际开发中的应用还是很广泛的。普遍来讲，各个公司都不会允许所有码农将代码直接提交到主分支（master）上，主分支只作为为所有码农下载项目（pull）使用。</p>
-<p>那么，我们无法将自己写的代码直接提交到master上，应该怎么办。最通常的方式就是将项目从master上pull下来，然后创建一个自己名字命名的分支，然后我们把修改的项目提交到自己的分支上，再有项目经理或者以上级别的人进行分支合并，将所有人的分支合并到master上。这样其他人在pull master的时候就能更新到除了自己以外所有人的代码。</p>
-<p>由于前几两篇关于git的文章我并没有对git常用命令进行讲解，所以在操作分支的时候各位也应该是对master push pull有所了解了。</p>
-<h5 id="git常用命令"><a href="#git常用命令" class="headerlink" title="git常用命令"></a>git常用命令</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git rm 文件名 <span class="comment"># 删除本地git仓库文件，提交后远程服务器上的文件会被删除</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git status <span class="comment"># 查看状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git add 文件名 <span class="comment"># 添加记录</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git add * <span class="comment"># 添加所有文件</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">"描述此次提交的内容"</span> <span class="comment"># 添加描述</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull origin master <span class="comment"># 从主分支同步数据</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git push origin master <span class="comment"># 提交数据到主分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch <span class="comment"># 查看分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch 分支名 <span class="comment"># 创建分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout 分支名 <span class="comment"># 切换分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b 分支名 <span class="comment"># 创建+切换分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -d 分支名 <span class="comment"># 删除分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -D 分支名 <span class="comment"># 强制删除分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git push origin :分支名 <span class="comment"># 删除远程分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout --file <span class="comment"># 撤销修改</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge 分支名 <span class="comment"># 合并某分支到当前分支</span></span></span><br></pre></td></tr></table></figure>
-
-<p>那么，介绍完了常用命令之后，我们应该如何新建分支进行工作</p>
-<h5 id="选择master-pull或者新项目直接git-clone默认master"><a href="#选择master-pull或者新项目直接git-clone默认master" class="headerlink" title="选择master pull或者新项目直接git clone默认master"></a>选择master pull或者新项目直接git clone默认master</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="创建分支"><a href="#创建分支" class="headerlink" title="创建分支"></a>创建分支</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b dev</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="将新建的分支push到远端"><a href="#将新建的分支push到远端" class="headerlink" title="将新建的分支push到远端"></a>将新建的分支push到远端</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git push origin dev</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="拉取远端分支"><a href="#拉取远端分支" class="headerlink" title="拉取远端分支"></a>拉取远端分支</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git pull</span></span><br><span class="line"></span><br><span class="line">There is no tracking information for the current branch.</span><br><span class="line">Please specify which branch you want to merge with.</span><br><span class="line">See git-pull(1) for details.</span><br><span class="line"></span><br><span class="line">git pull &lt;remote&gt; &lt;branch&gt;</span><br><span class="line"></span><br><span class="line">If you wish to set tracking information for this branch you can do so with:</span><br><span class="line"></span><br><span class="line">git branch --set-upstream-to=origin/&lt;branch&gt; dev</span><br><span class="line"><span class="meta">#</span><span class="bash"> 当前分支并没有和本地分支关联</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="关联分支"><a href="#关联分支" class="headerlink" title="关联分支"></a>关联分支</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git branch--<span class="built_in">set</span>-upstream-to=origin/dev</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="再次拉取"><a href="#再次拉取" class="headerlink" title="再次拉取"></a>再次拉取</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git pull</span></span><br></pre></td></tr></table></figure>
-
-<p>有关git分支内部工作原理的信息，请查看<a href="http://www.songjian.site:4000/2018/06/07/Git%E5%88%86%E6%94%AF%E7%9A%84%E5%86%85%E9%83%A8%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6/" target="_blank" rel="noopener">Git分支的内部运行机制</a></p>
-]]></content>
-      <categories>
-        <category>Git</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-        <tag>git checkout</tag>
-        <tag>git branch</tag>
       </tags>
   </entry>
   <entry>
@@ -1556,39 +1556,6 @@
       </tags>
   </entry>
   <entry>
-    <title>docker部署tomcat环境</title>
-    <url>/blog/2018/01/20/docker%E9%83%A8%E7%BD%B2tomcat/</url>
-    <content><![CDATA[<p>本篇文章介绍一下在docker环境中部署tomcat容器，将项目挂载到外部。</p>
-<ol>
-<li><p>在系统环境中安装docker</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum install docker -y</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>配置docker自启和启动docker</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl <span class="built_in">enable</span> docker</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl start docker</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>下载tomcat镜像</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker pull tomcat</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>启动tomcat镜像</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run --name jc_tomcat -v /home/jc_static_page:/usr/<span class="built_in">local</span>/tomcat/webapps/ROOT -p 8080:8080 -d docker.io/tomcat</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>分别查看本机的挂载目录里面的文件和容器内挂载目录里面的文件是否一致（没有文件的情况下，页面上有可能没有内容显示）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> -it 容器名 /bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 可以通过上面的命令进入tomcat容器内</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>打开浏览器输入网址IP:8080即可看到tomcat项</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>docker</category>
-      </categories>
-      <tags>
-        <tag>Centos7</tag>
-        <tag>docker</tag>
-        <tag>tomcat</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>docker部署portainer（单机和集群）</title>
     <url>/blog/2018/01/19/docker%E9%83%A8%E7%BD%B2portainer%EF%BC%88%E5%8D%95%E6%9C%BA%E5%92%8C%E9%9B%86%E7%BE%A4%EF%BC%89/</url>
     <content><![CDATA[<p>近两三年来docker的热度不断上升，很多公司都采用集群化的docker部署方案，也有很多技术爱好者和IT行业人士，使用单机版的docker部署一些自己的博客之列的，在这里我主要介绍以下单机版基于Centos7的docker图形化管理界面portainer的安装和docker swarm集群下portainer的安装。</p>
@@ -1660,6 +1627,39 @@
         <tag>docker</tag>
         <tag>docker swarm</tag>
         <tag>portainer</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker部署tomcat环境</title>
+    <url>/blog/2018/01/20/docker%E9%83%A8%E7%BD%B2tomcat/</url>
+    <content><![CDATA[<p>本篇文章介绍一下在docker环境中部署tomcat容器，将项目挂载到外部。</p>
+<ol>
+<li><p>在系统环境中安装docker</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> yum install docker -y</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置docker自启和启动docker</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> systemctl <span class="built_in">enable</span> docker</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> systemctl start docker</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载tomcat镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker pull tomcat</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动tomcat镜像</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker run --name jc_tomcat -v /home/jc_static_page:/usr/<span class="built_in">local</span>/tomcat/webapps/ROOT -p 8080:8080 -d docker.io/tomcat</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分别查看本机的挂载目录里面的文件和容器内挂载目录里面的文件是否一致（没有文件的情况下，页面上有可能没有内容显示）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> docker <span class="built_in">exec</span> -it 容器名 /bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 可以通过上面的命令进入tomcat容器内</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打开浏览器输入网址IP:8080即可看到tomcat项</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>Centos7</tag>
+        <tag>docker</tag>
+        <tag>tomcat</tag>
       </tags>
   </entry>
   <entry>
@@ -1853,26 +1853,6 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo文章图片显示</title>
-    <url>/blog/2018/01/19/hexo%E6%96%87%E7%AB%A0%E5%9B%BE%E7%89%87%E6%98%BE%E7%A4%BA/</url>
-    <content><![CDATA[<p>本篇文章介绍一下在hexo的框架内，想要在页面文章中显示图片的方法。</p>
-<ol>
-<li><p>把主页配置文件<code>_config.yml</code> 里的<code>post_asset_folder:</code>这个选项设置为<code>true</code></p>
-</li>
-<li><p>在你的hexo目录下执行这样一句话<code>npm install hexo-asset-image --save</code>，这是下载安装一个可以上传本地图片的插件</p>
-</li>
-<li><p>清除缓存重新构建后，创建文章后会在文章同级的目录中有一个跟文章名一样的文件夹，图片放在里面就行</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo g</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Git规范</title>
     <url>/blog/2019/11/29/git%E8%A7%84%E8%8C%83/</url>
     <content><![CDATA[<h4 id="导读"><a href="#导读" class="headerlink" title="导读"></a><a style="color: #4078c0;">导读</a></h4><blockquote>
@@ -1968,6 +1948,26 @@
       </categories>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo文章图片显示</title>
+    <url>/blog/2018/01/19/hexo%E6%96%87%E7%AB%A0%E5%9B%BE%E7%89%87%E6%98%BE%E7%A4%BA/</url>
+    <content><![CDATA[<p>本篇文章介绍一下在hexo的框架内，想要在页面文章中显示图片的方法。</p>
+<ol>
+<li><p>把主页配置文件<code>_config.yml</code> 里的<code>post_asset_folder:</code>这个选项设置为<code>true</code></p>
+</li>
+<li><p>在你的hexo目录下执行这样一句话<code>npm install hexo-asset-image --save</code>，这是下载安装一个可以上传本地图片的插件</p>
+</li>
+<li><p>清除缓存重新构建后，创建文章后会在文章同级的目录中有一个跟文章名一样的文件夹，图片放在里面就行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo g</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -2125,31 +2125,6 @@
       </tags>
   </entry>
   <entry>
-    <title>jQuery概览（二）——简单玩转jQuery实例</title>
-    <url>/blog/2018/02/02/jQuery%E6%A6%82%E8%A7%88%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E5%8D%95%E7%8E%A9%E8%BD%ACjQuery%E5%AE%9E%E4%BE%8B/</url>
-    <content><![CDATA[<p>本文介绍一下基本的jQuery的经典案例，大家可以用来参考，本文具有一定的参考价值，在实际的开发中会遇到很多类似的功能，我在这里实现了一些常用功能，可以供大家参考，后续还会在这篇文章中更新其他常用功能，大家可以收藏我的博客，继续关注</p>
-<p>一、返回顶部效果</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>向上滚动<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="css">		<span class="selector-class">.divB</span>&#123;</span></span><br><span class="line">			height: 2500px; </span><br><span class="line">			width: 100%;</span><br><span class="line">			background-color: green;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="css">		<span class="selector-class">.divG</span>&#123;</span></span><br><span class="line">			width: 50px;</span><br><span class="line">			height: 50px;</span><br><span class="line"><span class="css">			<span class="selector-tag">color</span>: <span class="selector-id">#ffffff</span>;</span></span><br><span class="line">			position: fixed;</span><br><span class="line">			bottom: 30px;</span><br><span class="line">			right: 30px;</span><br><span class="line">			background-color: red;</span><br><span class="line">			cursor: pointer;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="css">		<span class="selector-class">.hideG</span>&#123;</span></span><br><span class="line">			display: none;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"jquery-3.3.1.min.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"divB"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"divG hideG"</span> <span class="attr">onclick</span>=<span class="string">"gotoTop();"</span>&gt;</span>返回顶部<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript">		$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">			<span class="keyword">var</span> returnTop = $(<span class="built_in">window</span>).scrollTop();</span></span><br><span class="line">			if (returnTop &gt; 180) &#123;</span><br><span class="line"><span class="javascript">				$(<span class="string">".divG"</span>).removeClass(<span class="string">'hideG'</span>);</span></span><br><span class="line"><span class="actionscript">			&#125;<span class="keyword">else</span>&#123;</span></span><br><span class="line"><span class="javascript">				$(<span class="string">".divG"</span>).addClass(<span class="string">'hideG'</span>);</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line"></span><br><span class="line"><span class="actionscript">		<span class="function"><span class="keyword">function</span> <span class="title">gotoTop</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">			$(<span class="built_in">window</span>).scrollTop(<span class="number">0</span>);</span></span><br><span class="line">		&#125;;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<br>
-
-<p>二、左侧导航菜单</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>左侧菜单<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="css">		<span class="selector-class">.hide</span>&#123;</span></span><br><span class="line">			display: none;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"jquery-3.3.1.min.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">onclick</span>=<span class="string">"showMenu(this);"</span>&gt;</span>菜单一<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"con"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">onclick</span>=<span class="string">"showMenu(this);"</span>&gt;</span>菜单二<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"con hide"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">onclick</span>=<span class="string">"showMenu(this);"</span>&gt;</span>菜单三<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"con hide"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">		<span class="function"><span class="keyword">function</span> <span class="title">showMenu</span><span class="params">(self)</span></span>&#123;</span></span><br><span class="line"><span class="javascript">         	$(self).next().removeClass(<span class="string">'hide'</span>).parent().siblings().children(<span class="string">'.con'</span>).addClass(<span class="string">'hide'</span>);</span></span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<br>
-
-<p>三、tab切换</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>tab切换<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="css">		<span class="selector-class">.hide</span>&#123;</span></span><br><span class="line">			display: none;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="css">		<span class="selector-class">.clickMenu</span>&#123;</span></span><br><span class="line">			color: red;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"jquery-3.3.1.min.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"tab"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"title"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">li</span> <span class="attr">zidingyi</span>=<span class="string">"c1"</span> <span class="attr">class</span>=<span class="string">"clickMenu"</span> <span class="attr">onclick</span>=<span class="string">"clickMenu(this);"</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">li</span> <span class="attr">zidingyi</span>=<span class="string">"c2"</span> <span class="attr">onclick</span>=<span class="string">"clickMenu(this);"</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">li</span> <span class="attr">zidingyi</span>=<span class="string">"c3"</span> <span class="attr">onclick</span>=<span class="string">"clickMenu(this);"</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"content"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c1"</span>&gt;</span>c1内容<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c2"</span> <span class="attr">class</span>=<span class="string">"hide"</span>&gt;</span>c2内容<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c3"</span> <span class="attr">class</span>=<span class="string">"hide"</span>&gt;</span>c3内容<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">		<span class="function"><span class="keyword">function</span> <span class="title">clickMenu</span><span class="params">(self)</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">			$(self).addClass(<span class="string">'clickMenu'</span>).siblings().removeClass(<span class="string">'clickMenu'</span>);</span></span><br><span class="line"><span class="javascript">			$(<span class="string">"#"</span> + $(self).attr(<span class="string">'zidingyi'</span>)).removeClass(<span class="string">'hide'</span>).siblings().addClass(<span class="string">'hide'</span>);</span></span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>WEB前端</category>
-      </categories>
-      <tags>
-        <tag>返回顶部效果</tag>
-        <tag>左侧导航菜单</tag>
-        <tag>tab切换</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>jQuery概览（一）——简单玩转jQuery</title>
     <url>/blog/2018/01/26/jQuery%E6%A6%82%E8%A7%88%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E5%8D%95%E7%8E%A9%E8%BD%ACjQuery/</url>
     <content><![CDATA[<p>本篇文章介绍一下基本的jQuery的使用规则，包含常用的选择器，属性操作等等，如果在后续还有更新，我会在这篇文章中的相应位置进行增加，请大家继续关注我的博客</p>
@@ -2250,6 +2225,31 @@
         <tag>事间</tag>
         <tag>动画效果</tag>
         <tag>对象访问控制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>jQuery概览（二）——简单玩转jQuery实例</title>
+    <url>/blog/2018/02/02/jQuery%E6%A6%82%E8%A7%88%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E5%8D%95%E7%8E%A9%E8%BD%ACjQuery%E5%AE%9E%E4%BE%8B/</url>
+    <content><![CDATA[<p>本文介绍一下基本的jQuery的经典案例，大家可以用来参考，本文具有一定的参考价值，在实际的开发中会遇到很多类似的功能，我在这里实现了一些常用功能，可以供大家参考，后续还会在这篇文章中更新其他常用功能，大家可以收藏我的博客，继续关注</p>
+<p>一、返回顶部效果</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>向上滚动<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="css">		<span class="selector-class">.divB</span>&#123;</span></span><br><span class="line">			height: 2500px; </span><br><span class="line">			width: 100%;</span><br><span class="line">			background-color: green;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="css">		<span class="selector-class">.divG</span>&#123;</span></span><br><span class="line">			width: 50px;</span><br><span class="line">			height: 50px;</span><br><span class="line"><span class="css">			<span class="selector-tag">color</span>: <span class="selector-id">#ffffff</span>;</span></span><br><span class="line">			position: fixed;</span><br><span class="line">			bottom: 30px;</span><br><span class="line">			right: 30px;</span><br><span class="line">			background-color: red;</span><br><span class="line">			cursor: pointer;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="css">		<span class="selector-class">.hideG</span>&#123;</span></span><br><span class="line">			display: none;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"jquery-3.3.1.min.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"divB"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"divG hideG"</span> <span class="attr">onclick</span>=<span class="string">"gotoTop();"</span>&gt;</span>返回顶部<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript">		$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">			<span class="keyword">var</span> returnTop = $(<span class="built_in">window</span>).scrollTop();</span></span><br><span class="line">			if (returnTop &gt; 180) &#123;</span><br><span class="line"><span class="javascript">				$(<span class="string">".divG"</span>).removeClass(<span class="string">'hideG'</span>);</span></span><br><span class="line"><span class="actionscript">			&#125;<span class="keyword">else</span>&#123;</span></span><br><span class="line"><span class="javascript">				$(<span class="string">".divG"</span>).addClass(<span class="string">'hideG'</span>);</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line"></span><br><span class="line"><span class="actionscript">		<span class="function"><span class="keyword">function</span> <span class="title">gotoTop</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">			$(<span class="built_in">window</span>).scrollTop(<span class="number">0</span>);</span></span><br><span class="line">		&#125;;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>二、左侧导航菜单</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>左侧菜单<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="css">		<span class="selector-class">.hide</span>&#123;</span></span><br><span class="line">			display: none;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"jquery-3.3.1.min.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">onclick</span>=<span class="string">"showMenu(this);"</span>&gt;</span>菜单一<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"con"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">onclick</span>=<span class="string">"showMenu(this);"</span>&gt;</span>菜单二<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"con hide"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">onclick</span>=<span class="string">"showMenu(this);"</span>&gt;</span>菜单三<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"con hide"</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">li</span>&gt;</span>111<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">		<span class="function"><span class="keyword">function</span> <span class="title">showMenu</span><span class="params">(self)</span></span>&#123;</span></span><br><span class="line"><span class="javascript">         	$(self).next().removeClass(<span class="string">'hide'</span>).parent().siblings().children(<span class="string">'.con'</span>).addClass(<span class="string">'hide'</span>);</span></span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>三、tab切换</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>tab切换<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span></span><br><span class="line"><span class="css">		<span class="selector-class">.hide</span>&#123;</span></span><br><span class="line">			display: none;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="css">		<span class="selector-class">.clickMenu</span>&#123;</span></span><br><span class="line">			color: red;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"jquery-3.3.1.min.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"tab"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"title"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">li</span> <span class="attr">zidingyi</span>=<span class="string">"c1"</span> <span class="attr">class</span>=<span class="string">"clickMenu"</span> <span class="attr">onclick</span>=<span class="string">"clickMenu(this);"</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">li</span> <span class="attr">zidingyi</span>=<span class="string">"c2"</span> <span class="attr">onclick</span>=<span class="string">"clickMenu(this);"</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">li</span> <span class="attr">zidingyi</span>=<span class="string">"c3"</span> <span class="attr">onclick</span>=<span class="string">"clickMenu(this);"</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"content"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c1"</span>&gt;</span>c1内容<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c2"</span> <span class="attr">class</span>=<span class="string">"hide"</span>&gt;</span>c2内容<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c3"</span> <span class="attr">class</span>=<span class="string">"hide"</span>&gt;</span>c3内容<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">		<span class="function"><span class="keyword">function</span> <span class="title">clickMenu</span><span class="params">(self)</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">			$(self).addClass(<span class="string">'clickMenu'</span>).siblings().removeClass(<span class="string">'clickMenu'</span>);</span></span><br><span class="line"><span class="javascript">			$(<span class="string">"#"</span> + $(self).attr(<span class="string">'zidingyi'</span>)).removeClass(<span class="string">'hide'</span>).siblings().addClass(<span class="string">'hide'</span>);</span></span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>WEB前端</category>
+      </categories>
+      <tags>
+        <tag>返回顶部效果</tag>
+        <tag>左侧导航菜单</tag>
+        <tag>tab切换</tag>
       </tags>
   </entry>
   <entry>
@@ -2485,45 +2485,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java常用工具类——集合（三）HashMap</title>
-    <url>/blog/2018/01/23/java%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E2%80%94%E2%80%94%E9%9B%86%E5%90%88HashMap/</url>
-    <content><![CDATA[<p>本篇文章介绍一下Java常用工具类中的HashMap，HashMap是基于哈希表的Map接口的一个实现类，它是以键值对的方式存储的（无序存储），并且允许拥有一对空的键值且key值不允许重复。</p>
-<ol>
-<li><p>导入Map和HashMap需要的包</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>对HashMap进行初始化</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line"><span class="comment">// HashMap泛型指定键值对数据类型</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>map添加数据</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.put(key, value); </span><br><span class="line"><span class="comment">// 这里为要填入的键值对数据，通过put方法添加到名为map的HashMap列表中</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>打印输出map中的值，使用迭代器打印输出，首先导入Iterator包</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过迭代器输出HashMap中的value</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterator&lt;String&gt; it = map.values().iterator(); <span class="comment">// 获取map中所有的value存到it中</span></span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">  Systemctl.out.print(<span class="string">" "</span> + it.next() + <span class="string">" "</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过entrySet方法获得HashMap中的key、value</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 导入Set需要的包</span></span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"><span class="comment">// 将HashMap通过entrySet方法赋值给set，Set类型是Entry类型，Entry类型是HashMap的String数据类型</span></span><br><span class="line">Set&lt;Entry&lt;String, String&gt;&gt; set = map.entrySet();</span><br><span class="line"><span class="comment">// 通过增强型for循环遍历输出</span></span><br><span class="line"><span class="keyword">for</span>(Entry&lt;String, String&gt; entry:entrySet)&#123;</span><br><span class="line">  Systemctl.out.print(entry.getKey()); </span><br><span class="line">  <span class="comment">// 通过增强型for循环对Entry类型的重命名（entry）获取到key值</span></span><br><span class="line">  Systemctl.out.print(entry.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>本文讲解的是HashMap的常用方法，如果想了解其他方法可以查阅官网的文档</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java常用工具类</tag>
-        <tag>Map</tag>
-        <tag>HashMap</tag>
-        <tag>Iterator</tag>
-        <tag>Set</tag>
-        <tag>entrySet</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java常用工具类——集合（一）ArrayList</title>
     <url>/blog/2018/01/22/java%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E2%80%94%E2%80%94%E9%9B%86%E5%90%88ArrayList/</url>
     <content><![CDATA[<p>本篇文章介绍一下Java常用工具类中的ArrayList，ArrayList是有序的允许有重复数据的集合。ArrayList底层是由数组构成的，所以支持有序的排列方式。ArrayList和数组的区别在于，ArrayList是支持动态增长的</p>
@@ -2566,6 +2527,45 @@
         <tag>Java常用工具类</tag>
         <tag>List</tag>
         <tag>ArrayList</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java常用工具类——集合（三）HashMap</title>
+    <url>/blog/2018/01/23/java%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E2%80%94%E2%80%94%E9%9B%86%E5%90%88HashMap/</url>
+    <content><![CDATA[<p>本篇文章介绍一下Java常用工具类中的HashMap，HashMap是基于哈希表的Map接口的一个实现类，它是以键值对的方式存储的（无序存储），并且允许拥有一对空的键值且key值不允许重复。</p>
+<ol>
+<li><p>导入Map和HashMap需要的包</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对HashMap进行初始化</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line"><span class="comment">// HashMap泛型指定键值对数据类型</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>map添加数据</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.put(key, value); </span><br><span class="line"><span class="comment">// 这里为要填入的键值对数据，通过put方法添加到名为map的HashMap列表中</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印输出map中的值，使用迭代器打印输出，首先导入Iterator包</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过迭代器输出HashMap中的value</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterator&lt;String&gt; it = map.values().iterator(); <span class="comment">// 获取map中所有的value存到it中</span></span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">  Systemctl.out.print(<span class="string">" "</span> + it.next() + <span class="string">" "</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过entrySet方法获得HashMap中的key、value</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 导入Set需要的包</span></span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"><span class="comment">// 将HashMap通过entrySet方法赋值给set，Set类型是Entry类型，Entry类型是HashMap的String数据类型</span></span><br><span class="line">Set&lt;Entry&lt;String, String&gt;&gt; set = map.entrySet();</span><br><span class="line"><span class="comment">// 通过增强型for循环遍历输出</span></span><br><span class="line"><span class="keyword">for</span>(Entry&lt;String, String&gt; entry:entrySet)&#123;</span><br><span class="line">  Systemctl.out.print(entry.getKey()); </span><br><span class="line">  <span class="comment">// 通过增强型for循环对Entry类型的重命名（entry）获取到key值</span></span><br><span class="line">  Systemctl.out.print(entry.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>本文讲解的是HashMap的常用方法，如果想了解其他方法可以查阅官网的文档</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java常用工具类</tag>
+        <tag>Map</tag>
+        <tag>HashMap</tag>
+        <tag>Iterator</tag>
+        <tag>Set</tag>
+        <tag>entrySet</tag>
       </tags>
   </entry>
   <entry>
@@ -2634,6 +2634,44 @@
       <tags>
         <tag>scp</tag>
         <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nuxt整合iView</title>
+    <url>/blog/2018/09/12/nuxt%E6%95%B4%E5%90%88iView/</url>
+    <content><![CDATA[<p>最近使用vue做项目的时候，需要对页面进行seo优化，众所周知spa对seo支持很不友好。所以，最开始的解决方式是vue-meta-info和prerender-spa-plugin的组合，通过预渲染的方式进行。但是经过实际的实践操作，发现预渲染并不能很好的处理大量的异步请求和大量路由页面的项目。为此只好去踩坑nuxt了。</p>
+<p>关于nuxt在github上面有一个简单的demo我们可以安装下来进行查看。</p>
+<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536737877.jpg" alt="1536737877"></p>
+<p>项目成功跑起来后我们可以通过localhost:3000端口进行查看。</p>
+<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536737963.jpg" alt="1536737963"></p>
+<h5 id="1-下载iView"><a href="#1-下载iView" class="headerlink" title="1. 下载iView"></a>1. 下载iView</h5><p>在package.json文件中的dependencies下面添加iview版本号信息。</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="string">"iview"</span>: <span class="string">"^3.0.0"</span></span><br></pre></td></tr></table></figure>
+
+<p>然后在命令行终端执行cnpm install后会在node_modules目录下面多处一个iview的文件夹。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cnpm install</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-创建并编写Iview-js配置文件"><a href="#2-创建并编写Iview-js配置文件" class="headerlink" title="2. 创建并编写Iview.js配置文件"></a>2. 创建并编写Iview.js配置文件</h5><p>由于nuxt项目结构和我们普通的vue项目结构不同，这时很多人下载了iview并不知道怎么去引用到我们的项目中，实际在nuxt官网上面，已经对各个文件夹有了说明，其中的plugins文件夹为实例化之前需要运行的 Javascript 插件。</p>
+<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536740176.jpg" alt="1536740176"></p>
+<p>我们需要在plugins文件夹下创建一个Iview.js的文件，这个文件的文件名首字母必须大写，否则在运行的时候会报错。</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> Iview <span class="keyword">from</span> <span class="string">'iview'</span></span><br><span class="line">Vue.use(Iview)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-在nuxt-config-js中引用"><a href="#3-在nuxt-config-js中引用" class="headerlink" title="3. 在nuxt.config.js中引用"></a>3. 在nuxt.config.js中引用</h5><p>我们要把Iview的文件在nuxt的配置文件中进行引入，同时也要导入iView的css文件。</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">plugins: [&#123;</span><br><span class="line">    src: <span class="string">'~plugins/Iview.js'</span>,</span><br><span class="line">    ssr: <span class="literal">true</span>,</span><br><span class="line">&#125;],</span><br><span class="line">css: [</span><br><span class="line">    <span class="string">'iview/dist/styles/iview.css'</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-防止iView被webpack打包多次"><a href="#4-防止iView被webpack打包多次" class="headerlink" title="4. 防止iView被webpack打包多次"></a>4. 防止iView被webpack打包多次</h5><p>我们需要在nuxt.config.js中的build方法中，添加一个参数，防止多次打包。</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">vendor:[<span class="string">'iview'</span>]</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-测试"><a href="#5-测试" class="headerlink" title="5. 测试"></a>5. 测试</h5><p>到iView官网中找到一个按钮，放到我们项目中pages文件夹下的index.vue文件中，打开浏览器就能看到iView的组件了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;Button type&#x3D;&quot;primary&quot;&gt;Primary&lt;&#x2F;Button&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536740765.jpg" alt="1536740765"></p>
+]]></content>
+      <categories>
+        <category>WEB前端</category>
+      </categories>
+      <tags>
+        <tag>nuxt</tag>
+        <tag>iView</tag>
       </tags>
   </entry>
   <entry>
@@ -2929,44 +2967,6 @@
         <tag>预渲染</tag>
         <tag>seo优化</tag>
         <tag>nginx部署</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>nuxt整合iView</title>
-    <url>/blog/2018/09/12/nuxt%E6%95%B4%E5%90%88iView/</url>
-    <content><![CDATA[<p>最近使用vue做项目的时候，需要对页面进行seo优化，众所周知spa对seo支持很不友好。所以，最开始的解决方式是vue-meta-info和prerender-spa-plugin的组合，通过预渲染的方式进行。但是经过实际的实践操作，发现预渲染并不能很好的处理大量的异步请求和大量路由页面的项目。为此只好去踩坑nuxt了。</p>
-<p>关于nuxt在github上面有一个简单的demo我们可以安装下来进行查看。</p>
-<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536737877.jpg" alt="1536737877"></p>
-<p>项目成功跑起来后我们可以通过localhost:3000端口进行查看。</p>
-<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536737963.jpg" alt="1536737963"></p>
-<h5 id="1-下载iView"><a href="#1-下载iView" class="headerlink" title="1. 下载iView"></a>1. 下载iView</h5><p>在package.json文件中的dependencies下面添加iview版本号信息。</p>
-<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="string">"iview"</span>: <span class="string">"^3.0.0"</span></span><br></pre></td></tr></table></figure>
-
-<p>然后在命令行终端执行cnpm install后会在node_modules目录下面多处一个iview的文件夹。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cnpm install</span><br></pre></td></tr></table></figure>
-
-<h5 id="2-创建并编写Iview-js配置文件"><a href="#2-创建并编写Iview-js配置文件" class="headerlink" title="2. 创建并编写Iview.js配置文件"></a>2. 创建并编写Iview.js配置文件</h5><p>由于nuxt项目结构和我们普通的vue项目结构不同，这时很多人下载了iview并不知道怎么去引用到我们的项目中，实际在nuxt官网上面，已经对各个文件夹有了说明，其中的plugins文件夹为实例化之前需要运行的 Javascript 插件。</p>
-<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536740176.jpg" alt="1536740176"></p>
-<p>我们需要在plugins文件夹下创建一个Iview.js的文件，这个文件的文件名首字母必须大写，否则在运行的时候会报错。</p>
-<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> Iview <span class="keyword">from</span> <span class="string">'iview'</span></span><br><span class="line">Vue.use(Iview)</span><br></pre></td></tr></table></figure>
-
-<h5 id="3-在nuxt-config-js中引用"><a href="#3-在nuxt-config-js中引用" class="headerlink" title="3. 在nuxt.config.js中引用"></a>3. 在nuxt.config.js中引用</h5><p>我们要把Iview的文件在nuxt的配置文件中进行引入，同时也要导入iView的css文件。</p>
-<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">plugins: [&#123;</span><br><span class="line">    src: <span class="string">'~plugins/Iview.js'</span>,</span><br><span class="line">    ssr: <span class="literal">true</span>,</span><br><span class="line">&#125;],</span><br><span class="line">css: [</span><br><span class="line">    <span class="string">'iview/dist/styles/iview.css'</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<h5 id="4-防止iView被webpack打包多次"><a href="#4-防止iView被webpack打包多次" class="headerlink" title="4. 防止iView被webpack打包多次"></a>4. 防止iView被webpack打包多次</h5><p>我们需要在nuxt.config.js中的build方法中，添加一个参数，防止多次打包。</p>
-<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">vendor:[<span class="string">'iview'</span>]</span><br></pre></td></tr></table></figure>
-
-<h5 id="5-测试"><a href="#5-测试" class="headerlink" title="5. 测试"></a>5. 测试</h5><p>到iView官网中找到一个按钮，放到我们项目中pages文件夹下的index.vue文件中，打开浏览器就能看到iView的组件了。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;Button type&#x3D;&quot;primary&quot;&gt;Primary&lt;&#x2F;Button&gt;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/blog/images/nuxt%E6%95%B4%E5%90%88iView/1536740765.jpg" alt="1536740765"></p>
-]]></content>
-      <categories>
-        <category>WEB前端</category>
-      </categories>
-      <tags>
-        <tag>nuxt</tag>
-        <tag>iView</tag>
       </tags>
   </entry>
   <entry>
@@ -3330,103 +3330,6 @@
       </tags>
   </entry>
   <entry>
-    <title>详解flex布局</title>
-    <url>/blog/2018/07/10/%E8%AF%A6%E8%A7%A3flex%E5%B8%83%E5%B1%80/</url>
-    <content><![CDATA[<h4 id="一-flex介绍"><a href="#一-flex介绍" class="headerlink" title="一. flex介绍"></a>一. flex介绍</h4><p>flex简单来说就是”弹性布局“，用来为盒状模型提供最大的灵活性，任何一个容器都可以指定为一个flex容器。</p>
-<p>flex可以以简便、完整、相应式地实现各种页面布局。目前，它已经得到了所有浏览器的支持，这意味着，现在就能很安全的使用这个功能。</p>
-<p>关于布局传统的解决方案是基于盒状模型的，依赖display+position+float。它对于那些特殊布局非常不方便。比如，垂直居中就不容易实现。</p>
-<p><img src="/blog/images/%E8%AF%A6%E8%A7%A3flex%E5%B8%83%E5%B1%80/8712d713c7d0b884a5cb9770efc422b4.jpg" alt="8712d713c7d0b884a5cb9770efc422b4"></p>
-<h4 id="二-基本概念"><a href="#二-基本概念" class="headerlink" title="二. 基本概念"></a>二. 基本概念</h4><p>采用flex布局的元素我们称之为flex容器（flex container），简称“容器”。他的所有的子元素都是容器的成员（flex item），简称“项目”。</p>
-<p>容器默认存在两根轴：水平的主轴（main axis）和垂直的交叉轴（cross axis）。主轴的开始位置（与边框的交叉点）叫做main start，结束位置叫做main end；交叉轴的开始位置叫做cross start，结束位置叫做cross end。</p>
-<p>项目默认沿主轴排列。单个项目占据的主轴空间叫做main size，占据的交叉轴空间叫做cross size。</p>
-<p><img src="/blog/images/%E8%AF%A6%E8%A7%A3flex%E5%B8%83%E5%B1%80/3791e575c48b3698be6a94ae1dbff79d.png" alt="3791e575c48b3698be6a94ae1dbff79d"></p>
-<h4 id="三-如何声明flex布局"><a href="#三-如何声明flex布局" class="headerlink" title="三. 如何声明flex布局"></a>三. 如何声明flex布局</h4><p>任何一个容器都可以指定为flex布局</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">display</span>: flex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>行内元素使用flex布局</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">display</span>: inline-flex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>webkit内核的浏览器，必须加上-webkit-前缀</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">display</span>: -webkit-flex; <span class="comment">/* Safari */</span></span><br><span class="line">	<span class="attribute">display</span>: flex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p style="color: red;">注意：一旦使用flex布局后，子元素的float、clear和vertical-align属性将失效。</p>
-
-
-
-<h4 id="四-容器的六种属性"><a href="#四-容器的六种属性" class="headerlink" title="四. 容器的六种属性"></a>四. 容器的六种属性</h4><ul>
-<li>flex-direction</li>
-<li>flex-wrap</li>
-<li>flex-flow</li>
-<li>justify-content</li>
-<li>align-items</li>
-<li>align-content</li>
-</ul>
-<h5 id="4-1-flex-direction属性"><a href="#4-1-flex-direction属性" class="headerlink" title="4.1 flex-direction属性"></a>4.1 flex-direction属性</h5><p>flex-derection属性决定主轴的方向（即项目的排列方向）。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">flex-direction</span>: row | row-reverse | column | column-reverse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	row：（默认值）主轴为水平方向，起点在左端。</span></span><br><span class="line"><span class="comment">	row-reverse：主轴为水平方向，起点在右端。</span></span><br><span class="line"><span class="comment">	column：主轴为垂直方向，起点在上端。</span></span><br><span class="line"><span class="comment">	column-reverse：主轴为垂直方向，起点在下端</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="4-2-flex-wrap属性"><a href="#4-2-flex-wrap属性" class="headerlink" title="4.2 flex-wrap属性"></a>4.2 flex-wrap属性</h5><p>默认情况下，项目都会排列在一条线上。flex-wrap属性，允许我们进行项目的换行操作。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">flex-wrap</span>: nowrap | wrap | wrap-reverse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	nowrap：（默认值）不换行。</span></span><br><span class="line"><span class="comment">	wrap：换行，第一行在上方。</span></span><br><span class="line"><span class="comment">	wrap-reverse：换行，第一行在下方。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="4-3-flex-flow属性"><a href="#4-3-flex-flow属性" class="headerlink" title="4.3 flex-flow属性"></a>4.3 flex-flow属性</h5><p>flex-flow属性是flex-direction属性和flex-wrap属性的简写形式，默认值为row nowrap。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">flex-flow</span>: &lt;flex-direction&gt; &lt;flex-wrap&gt;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-direction：flex-direction可以选择的值。</span></span><br><span class="line"><span class="comment">	flex-wrap：flex-wrap可以选择的值。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="4-4-justify-content属性"><a href="#4-4-justify-content属性" class="headerlink" title="4.4 justify-content属性"></a>4.4 justify-content属性</h5><p>justify-content属性定义了容器中项目在主轴上的对齐方式。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">justify-content</span>: flex-start | flex-end | center | space-between | space-around;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-start：（默认值）左对齐。</span></span><br><span class="line"><span class="comment">	flex-end：右对齐。</span></span><br><span class="line"><span class="comment">	center：居中。</span></span><br><span class="line"><span class="comment">	space-between：两端对齐，项目之间的间隔都相等。</span></span><br><span class="line"><span class="comment">	space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="4-5-align-items属性"><a href="#4-5-align-items属性" class="headerlink" title="4.5 align-items属性"></a>4.5 align-items属性</h5><p>align-items属性定义项目在交叉轴上如何对齐。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">align-items</span>: flex-start | flex-end | center | baseline | stretch;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-start：交叉轴的起点对齐。</span></span><br><span class="line"><span class="comment">	flex-end：交叉轴的终点对齐。</span></span><br><span class="line"><span class="comment">	center：交叉轴的中点对齐。</span></span><br><span class="line"><span class="comment">	baseline：项目的第一行文字的基线对齐。</span></span><br><span class="line"><span class="comment">	stretch：（默认值）如果项目没有设置高度或者设为auto，将占满整个容器的高度。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="4-6-align-content属性"><a href="#4-6-align-content属性" class="headerlink" title="4.6 align-content属性"></a>4.6 align-content属性</h5><p>align-content属性定义了多根轴线的对齐方式。<p style="color:red">注意：如果项目只有一根轴线，该属性不起作用。</p></p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">align-content</span>: flex-start | flex-end | center | space-between | space-around | stretch;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-start：与交叉轴的起点对齐。</span></span><br><span class="line"><span class="comment">	flex-end：与交叉轴的终点对齐。</span></span><br><span class="line"><span class="comment">	center：与交叉轴的中点对齐。</span></span><br><span class="line"><span class="comment">	space-between：与交叉轴两端对齐，轴线之间的间隔平均分布。</span></span><br><span class="line"><span class="comment">	space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。</span></span><br><span class="line"><span class="comment">	stretch：（默认值）轴线占满整个交叉轴。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="五-项目的六种属性"><a href="#五-项目的六种属性" class="headerlink" title="五. 项目的六种属性"></a>五. 项目的六种属性</h4><ul>
-<li>order</li>
-<li>flex-grow</li>
-<li>flex-shrink</li>
-<li>flex-basis</li>
-<li>flex</li>
-<li>align-self</li>
-</ul>
-<h5 id="5-1-order属性"><a href="#5-1-order属性" class="headerlink" title="5.1 order属性"></a>5.1 order属性</h5><p>order属性定义项目的排列顺序。数值越小，排列越靠前，默认为0。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">order</span>: &lt;integer&gt;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	integer：（默认值为0）可填任意整数。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="5-2-flex-grow属性"><a href="#5-2-flex-grow属性" class="headerlink" title="5.2 flex-grow属性"></a>5.2 flex-grow属性</h5><p>flex-grow属性定义项目的放大比例，默认为0，即如果存在剩余空间也不进行放大。</p>
-<p style="color:red">当属性值都为1时，等分剩余空间。</p>
-
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex-grow</span>: &lt;number&gt;; <span class="comment">/* default 0 */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="5-3-flex-shrink属性"><a href="#5-3-flex-shrink属性" class="headerlink" title="5.3 flex-shrink属性"></a>5.3 flex-shrink属性</h5><p>flex-shrink属性定义了项目的缩小比例，默认为1，即如果空间不足，将项目进行缩小。</p>
-<p style="color:red">值为负数，属性无效。当一个项目属性值为0其它项目属性值都为1时，为0的项目在空间不足的时候也不会被缩放。</p>
-
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex-shrink</span>: &lt;number&gt;; <span class="comment">/* default 1 */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="5-4-flex-basis属性"><a href="#5-4-flex-basis属性" class="headerlink" title="5.4 flex-basis属性"></a>5.4 flex-basis属性</h5><p>flex-basis属性定义了再分配多于空间之前，项目占据的主轴空间。浏览器根据这个属性计算主轴是否有多余空间。他的默认值为auto，即项目本来的大小。</p>
-<p>它可以设为跟width或height属性一样的值（比如350px），则项目占据固定空间。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex-basis</span>: &lt;length&gt; | auto; <span class="comment">/* default auto */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="5-5-flex属性"><a href="#5-5-flex属性" class="headerlink" title="5.5 flex属性"></a>5.5 flex属性</h5><p>flex熟悉是flex-grow, flex-shrink 和 flex-basis的简写，默认值为0 1 auto。后两个属性可选。 </p>
-<p>该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)。</p>
-<p>建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值。</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex</span>: none | [ &lt;<span class="string">'flex-grow'</span>&gt; &lt;<span class="string">'flex-shrink'</span>&gt;? || &lt;<span class="string">'flex-basis'</span>&gt; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="5-6-align-self属性"><a href="#5-6-align-self属性" class="headerlink" title="5.6 align-self属性"></a>5.6 align-self属性</h5><p>align-self属性允许单个项目有与其他项目不一样的对齐方式，可覆盖align-items属性。默认值为auto，表示继承父元素的align-items属性，如果没有父元素，则等同于stretch。 </p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">align-self</span>: auto | flex-start | flex-end | center | baseline | stretch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="六-总结"><a href="#六-总结" class="headerlink" title="六. 总结"></a>六. 总结</h4><p>本篇文章基本的介绍了下flex布局，总的来说flex布局已经是主流的布局方式，后续我会写一些关于flex布局的实例供大家参考，也希望大家将博客的问题通过留言的方式告诉我，我会陆续进行修改。</p>
-]]></content>
-      <categories>
-        <category>WEB前端</category>
-      </categories>
-      <tags>
-        <tag>css</tag>
-        <tag>flex</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>深入解读vue源码（四）new Vue</title>
     <url>/blog/2019/06/20/%E6%B7%B1%E5%85%A5%E8%A7%A3%E8%AF%BBvue%E6%BA%90%E7%A0%81%EF%BC%88%E5%9B%9B%EF%BC%89new%20Vue/</url>
     <content><![CDATA[<h4 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h4><p>这篇文章作为该系列文章中数据驱动部分的第一篇文章，将会揭开<code style="letter-spacing: 2px;font-weight:700;background-color:#e6effb;border-radius:3px;">new Vue</code>背后做了什么事情。</p>
@@ -3524,24 +3427,100 @@
       </tags>
   </entry>
   <entry>
-    <title>通过配置文件修改docker容器端口映射</title>
-    <url>/blog/2018/07/04/%E9%80%9A%E8%BF%87%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BF%AE%E6%94%B9docker%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84/</url>
-    <content><![CDATA[<p>对于修改docker容器端口映射，我们通常会想到将当前容器生成一个镜像，然后重新运行生成的镜像，再添加上端口的映射以达到修改端口的目的。</p>
-<p>不过，还有一种方式是修改docker容器配置文件的方式去修改容器的端口映射，相比重新生成镜像来说，这种方式便捷了很多。</p>
-<h5 id="关闭运行中的docker容器"><a href="#关闭运行中的docker容器" class="headerlink" title="关闭运行中的docker容器"></a>关闭运行中的docker容器</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker stop container_name</span><br></pre></td></tr></table></figure>
+    <title>详解flex布局</title>
+    <url>/blog/2018/07/10/%E8%AF%A6%E8%A7%A3flex%E5%B8%83%E5%B1%80/</url>
+    <content><![CDATA[<h4 id="一-flex介绍"><a href="#一-flex介绍" class="headerlink" title="一. flex介绍"></a>一. flex介绍</h4><p>flex简单来说就是”弹性布局“，用来为盒状模型提供最大的灵活性，任何一个容器都可以指定为一个flex容器。</p>
+<p>flex可以以简便、完整、相应式地实现各种页面布局。目前，它已经得到了所有浏览器的支持，这意味着，现在就能很安全的使用这个功能。</p>
+<p>关于布局传统的解决方案是基于盒状模型的，依赖display+position+float。它对于那些特殊布局非常不方便。比如，垂直居中就不容易实现。</p>
+<p><img src="/blog/images/%E8%AF%A6%E8%A7%A3flex%E5%B8%83%E5%B1%80/8712d713c7d0b884a5cb9770efc422b4.jpg" alt="8712d713c7d0b884a5cb9770efc422b4"></p>
+<h4 id="二-基本概念"><a href="#二-基本概念" class="headerlink" title="二. 基本概念"></a>二. 基本概念</h4><p>采用flex布局的元素我们称之为flex容器（flex container），简称“容器”。他的所有的子元素都是容器的成员（flex item），简称“项目”。</p>
+<p>容器默认存在两根轴：水平的主轴（main axis）和垂直的交叉轴（cross axis）。主轴的开始位置（与边框的交叉点）叫做main start，结束位置叫做main end；交叉轴的开始位置叫做cross start，结束位置叫做cross end。</p>
+<p>项目默认沿主轴排列。单个项目占据的主轴空间叫做main size，占据的交叉轴空间叫做cross size。</p>
+<p><img src="/blog/images/%E8%AF%A6%E8%A7%A3flex%E5%B8%83%E5%B1%80/3791e575c48b3698be6a94ae1dbff79d.png" alt="3791e575c48b3698be6a94ae1dbff79d"></p>
+<h4 id="三-如何声明flex布局"><a href="#三-如何声明flex布局" class="headerlink" title="三. 如何声明flex布局"></a>三. 如何声明flex布局</h4><p>任何一个容器都可以指定为flex布局</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">display</span>: flex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="停止系统中运行的docker服务"><a href="#停止系统中运行的docker服务" class="headerlink" title="停止系统中运行的docker服务"></a>停止系统中运行的docker服务</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl stop docker</span><br></pre></td></tr></table></figure>
+<p>行内元素使用flex布局</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">display</span>: inline-flex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /var/lib/docker/containers/[container_id]/hostconfig.json</span><br><span class="line"><span class="meta">#</span><span class="bash"> container_id为容器id</span></span><br></pre></td></tr></table></figure>
+<p>webkit内核的浏览器，必须加上-webkit-前缀</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">display</span>: -webkit-flex; <span class="comment">/* Safari */</span></span><br><span class="line">	<span class="attribute">display</span>: flex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">"4000/tcp": [ </span><br><span class="line">&#123;</span><br><span class="line"> "HostIp": "0.0.0.0",</span><br><span class="line"> "HostPort": "80"</span><br><span class="line"> &#125;</span><br><span class="line">]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 4000端口为容器内端口，80为实体机端口</span></span><br></pre></td></tr></table></figure>
+<p style="color: red;">注意：一旦使用flex布局后，子元素的float、clear和vertical-align属性将失效。</p>
 
-<h5 id="修改完成后重启docker服务和docker容器"><a href="#修改完成后重启docker服务和docker容器" class="headerlink" title="修改完成后重启docker服务和docker容器"></a>修改完成后重启docker服务和docker容器</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start docker</span><br><span class="line">docker start container_name</span><br></pre></td></tr></table></figure>]]></content>
+
+
+<h4 id="四-容器的六种属性"><a href="#四-容器的六种属性" class="headerlink" title="四. 容器的六种属性"></a>四. 容器的六种属性</h4><ul>
+<li>flex-direction</li>
+<li>flex-wrap</li>
+<li>flex-flow</li>
+<li>justify-content</li>
+<li>align-items</li>
+<li>align-content</li>
+</ul>
+<h5 id="4-1-flex-direction属性"><a href="#4-1-flex-direction属性" class="headerlink" title="4.1 flex-direction属性"></a>4.1 flex-direction属性</h5><p>flex-derection属性决定主轴的方向（即项目的排列方向）。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">flex-direction</span>: row | row-reverse | column | column-reverse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	row：（默认值）主轴为水平方向，起点在左端。</span></span><br><span class="line"><span class="comment">	row-reverse：主轴为水平方向，起点在右端。</span></span><br><span class="line"><span class="comment">	column：主轴为垂直方向，起点在上端。</span></span><br><span class="line"><span class="comment">	column-reverse：主轴为垂直方向，起点在下端</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-2-flex-wrap属性"><a href="#4-2-flex-wrap属性" class="headerlink" title="4.2 flex-wrap属性"></a>4.2 flex-wrap属性</h5><p>默认情况下，项目都会排列在一条线上。flex-wrap属性，允许我们进行项目的换行操作。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">flex-wrap</span>: nowrap | wrap | wrap-reverse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	nowrap：（默认值）不换行。</span></span><br><span class="line"><span class="comment">	wrap：换行，第一行在上方。</span></span><br><span class="line"><span class="comment">	wrap-reverse：换行，第一行在下方。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-3-flex-flow属性"><a href="#4-3-flex-flow属性" class="headerlink" title="4.3 flex-flow属性"></a>4.3 flex-flow属性</h5><p>flex-flow属性是flex-direction属性和flex-wrap属性的简写形式，默认值为row nowrap。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">flex-flow</span>: &lt;flex-direction&gt; &lt;flex-wrap&gt;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-direction：flex-direction可以选择的值。</span></span><br><span class="line"><span class="comment">	flex-wrap：flex-wrap可以选择的值。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-4-justify-content属性"><a href="#4-4-justify-content属性" class="headerlink" title="4.4 justify-content属性"></a>4.4 justify-content属性</h5><p>justify-content属性定义了容器中项目在主轴上的对齐方式。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">justify-content</span>: flex-start | flex-end | center | space-between | space-around;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-start：（默认值）左对齐。</span></span><br><span class="line"><span class="comment">	flex-end：右对齐。</span></span><br><span class="line"><span class="comment">	center：居中。</span></span><br><span class="line"><span class="comment">	space-between：两端对齐，项目之间的间隔都相等。</span></span><br><span class="line"><span class="comment">	space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-5-align-items属性"><a href="#4-5-align-items属性" class="headerlink" title="4.5 align-items属性"></a>4.5 align-items属性</h5><p>align-items属性定义项目在交叉轴上如何对齐。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">align-items</span>: flex-start | flex-end | center | baseline | stretch;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-start：交叉轴的起点对齐。</span></span><br><span class="line"><span class="comment">	flex-end：交叉轴的终点对齐。</span></span><br><span class="line"><span class="comment">	center：交叉轴的中点对齐。</span></span><br><span class="line"><span class="comment">	baseline：项目的第一行文字的基线对齐。</span></span><br><span class="line"><span class="comment">	stretch：（默认值）如果项目没有设置高度或者设为auto，将占满整个容器的高度。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-6-align-content属性"><a href="#4-6-align-content属性" class="headerlink" title="4.6 align-content属性"></a>4.6 align-content属性</h5><p>align-content属性定义了多根轴线的对齐方式。<p style="color:red">注意：如果项目只有一根轴线，该属性不起作用。</p></p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.box</span> &#123;</span><br><span class="line">	<span class="attribute">align-content</span>: flex-start | flex-end | center | space-between | space-around | stretch;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	flex-start：与交叉轴的起点对齐。</span></span><br><span class="line"><span class="comment">	flex-end：与交叉轴的终点对齐。</span></span><br><span class="line"><span class="comment">	center：与交叉轴的中点对齐。</span></span><br><span class="line"><span class="comment">	space-between：与交叉轴两端对齐，轴线之间的间隔平均分布。</span></span><br><span class="line"><span class="comment">	space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。</span></span><br><span class="line"><span class="comment">	stretch：（默认值）轴线占满整个交叉轴。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="五-项目的六种属性"><a href="#五-项目的六种属性" class="headerlink" title="五. 项目的六种属性"></a>五. 项目的六种属性</h4><ul>
+<li>order</li>
+<li>flex-grow</li>
+<li>flex-shrink</li>
+<li>flex-basis</li>
+<li>flex</li>
+<li>align-self</li>
+</ul>
+<h5 id="5-1-order属性"><a href="#5-1-order属性" class="headerlink" title="5.1 order属性"></a>5.1 order属性</h5><p>order属性定义项目的排列顺序。数值越小，排列越靠前，默认为0。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">order</span>: &lt;integer&gt;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	integer：（默认值为0）可填任意整数。</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="5-2-flex-grow属性"><a href="#5-2-flex-grow属性" class="headerlink" title="5.2 flex-grow属性"></a>5.2 flex-grow属性</h5><p>flex-grow属性定义项目的放大比例，默认为0，即如果存在剩余空间也不进行放大。</p>
+<p style="color:red">当属性值都为1时，等分剩余空间。</p>
+
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex-grow</span>: &lt;number&gt;; <span class="comment">/* default 0 */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-3-flex-shrink属性"><a href="#5-3-flex-shrink属性" class="headerlink" title="5.3 flex-shrink属性"></a>5.3 flex-shrink属性</h5><p>flex-shrink属性定义了项目的缩小比例，默认为1，即如果空间不足，将项目进行缩小。</p>
+<p style="color:red">值为负数，属性无效。当一个项目属性值为0其它项目属性值都为1时，为0的项目在空间不足的时候也不会被缩放。</p>
+
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex-shrink</span>: &lt;number&gt;; <span class="comment">/* default 1 */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-4-flex-basis属性"><a href="#5-4-flex-basis属性" class="headerlink" title="5.4 flex-basis属性"></a>5.4 flex-basis属性</h5><p>flex-basis属性定义了再分配多于空间之前，项目占据的主轴空间。浏览器根据这个属性计算主轴是否有多余空间。他的默认值为auto，即项目本来的大小。</p>
+<p>它可以设为跟width或height属性一样的值（比如350px），则项目占据固定空间。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex-basis</span>: &lt;length&gt; | auto; <span class="comment">/* default auto */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-5-flex属性"><a href="#5-5-flex属性" class="headerlink" title="5.5 flex属性"></a>5.5 flex属性</h5><p>flex熟悉是flex-grow, flex-shrink 和 flex-basis的简写，默认值为0 1 auto。后两个属性可选。 </p>
+<p>该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)。</p>
+<p>建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">flex</span>: none | [ &lt;<span class="string">'flex-grow'</span>&gt; &lt;<span class="string">'flex-shrink'</span>&gt;? || &lt;<span class="string">'flex-basis'</span>&gt; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-6-align-self属性"><a href="#5-6-align-self属性" class="headerlink" title="5.6 align-self属性"></a>5.6 align-self属性</h5><p>align-self属性允许单个项目有与其他项目不一样的对齐方式，可覆盖align-items属性。默认值为auto，表示继承父元素的align-items属性，如果没有父元素，则等同于stretch。 </p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.item</span> &#123;</span><br><span class="line">	<span class="attribute">align-self</span>: auto | flex-start | flex-end | center | baseline | stretch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="六-总结"><a href="#六-总结" class="headerlink" title="六. 总结"></a>六. 总结</h4><p>本篇文章基本的介绍了下flex布局，总的来说flex布局已经是主流的布局方式，后续我会写一些关于flex布局的实例供大家参考，也希望大家将博客的问题通过留言的方式告诉我，我会陆续进行修改。</p>
+]]></content>
       <categories>
-        <category>docker</category>
+        <category>WEB前端</category>
       </categories>
       <tags>
-        <tag>docker</tag>
+        <tag>css</tag>
+        <tag>flex</tag>
       </tags>
   </entry>
   <entry>
@@ -3578,6 +3557,27 @@
         <tag>Dockerfile</tag>
         <tag>node</tag>
         <tag>docker-compose</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>通过配置文件修改docker容器端口映射</title>
+    <url>/blog/2018/07/04/%E9%80%9A%E8%BF%87%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BF%AE%E6%94%B9docker%E5%AE%B9%E5%99%A8%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84/</url>
+    <content><![CDATA[<p>对于修改docker容器端口映射，我们通常会想到将当前容器生成一个镜像，然后重新运行生成的镜像，再添加上端口的映射以达到修改端口的目的。</p>
+<p>不过，还有一种方式是修改docker容器配置文件的方式去修改容器的端口映射，相比重新生成镜像来说，这种方式便捷了很多。</p>
+<h5 id="关闭运行中的docker容器"><a href="#关闭运行中的docker容器" class="headerlink" title="关闭运行中的docker容器"></a>关闭运行中的docker容器</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker stop container_name</span><br></pre></td></tr></table></figure>
+
+<h5 id="停止系统中运行的docker服务"><a href="#停止系统中运行的docker服务" class="headerlink" title="停止系统中运行的docker服务"></a>停止系统中运行的docker服务</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl stop docker</span><br></pre></td></tr></table></figure>
+
+<h5 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /var/lib/docker/containers/[container_id]/hostconfig.json</span><br><span class="line"><span class="meta">#</span><span class="bash"> container_id为容器id</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">"4000/tcp": [ </span><br><span class="line">&#123;</span><br><span class="line"> "HostIp": "0.0.0.0",</span><br><span class="line"> "HostPort": "80"</span><br><span class="line"> &#125;</span><br><span class="line">]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 4000端口为容器内端口，80为实体机端口</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="修改完成后重启docker服务和docker容器"><a href="#修改完成后重启docker服务和docker容器" class="headerlink" title="修改完成后重启docker服务和docker容器"></a>修改完成后重启docker服务和docker容器</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start docker</span><br><span class="line">docker start container_name</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
       </tags>
   </entry>
 </search>
