@@ -50,7 +50,7 @@
 
 ## 开源项目
 
-其它正在开发中的开源项目请参考本人`Github`以及`npm`。
+[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 贡献者，其它个人正在开发中的开源项目请参考本人`Github`以及`npm`。
 
 - [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过8100次；
 - [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过4600次下载量的多功能表格工具；
