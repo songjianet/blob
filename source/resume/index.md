@@ -52,6 +52,6 @@
 
 [TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 贡献者，其它个人正在开发中的开源项目请参考本人`Github`以及`npm`。
 
-- [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过8100次；
+- [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过8300次；
 - [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过4700次下载量的多功能表格工具；
-- [wechat-city-picker](https://www.npmjs.com/package/wechat-city-picker) 基于微信小程序原生的省市区三级联动插件，最高单周下载量为1506次，累计下载量超过4910次；
+- [wechat-city-picker](https://www.npmjs.com/package/wechat-city-picker) 基于微信小程序原生的省市区三级联动插件，最高单周下载量为1506次，累计下载量超过5000次；
