@@ -1,6 +1,6 @@
 ## 简介
 
-- 较为深入了解`Vue`及其相关生态技术栈，了解`Vue`响应式原理、`$nextTick`实现、`ref`实现、`Composition API`等
+- 掌握最新`Vue`生态，深入了解`setup`、`Composition API`等
 - 掌握`BFC`条件、约束规则
 - 掌握性能加载优化方案
 - 掌握`HTTP`缓存、线头阻塞、同源策略
@@ -50,7 +50,7 @@
 
 ## 开源项目
 
-[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 贡献者，其它个人正在开发中的开源项目请参考本人`Github`以及`npm`。
+[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 的贡献者，其它个人正在开发中的开源项目累计下载量超过3万次，详细请参考本人`Github`以及`npm`。
 
 - [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过8300次；
 - [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过4700次下载量的多功能表格工具；
