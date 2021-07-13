@@ -1,6 +1,7 @@
 ## 简介
 
 - 掌握最新`Vue`生态，深入了解`setup`、`Composition API`等
+- 掌握`vite`、`rollup`和`webpack`等打包构建工具
 - 掌握`BFC`条件、约束规则
 - 掌握性能加载优化方案
 - 掌握`HTTP`缓存、线头阻塞、同源策略
