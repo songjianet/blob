@@ -1,6 +1,6 @@
 ## 简介
 
-- 掌握最新`Vue`生态，深入了解`setup`、`Composition API`等
+- 掌握最新`Vue`生态，深入了解`Options API`、`Composition API`等
 - 掌握`vite`、`rollup`和`webpack`等打包构建工具
 - 掌握`BFC`条件、约束规则
 - 掌握性能加载优化方案
@@ -51,7 +51,7 @@
 
 ## 开源项目
 
-[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 的核心贡献者之一，[element-plus/element-plus](https://github.com/element-plus/element-plus) 的贡献者之一，其它个人正在开发中的开源项目累计下载量超过3万次，详细请参考本人`Github`以及`npm`。
+[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 的核心贡献者之一，[element-plus/element-plus](https://github.com/element-plus/element-plus) 的贡献者之一，其它个人正在开发中的开源项目累计下载量超过32000次，详细请参考本人`Github`以及`npm`。
 
 - [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过8300次；
 - [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过4700次下载量的多功能表格工具；
