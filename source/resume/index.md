@@ -18,6 +18,14 @@
 - npm: [songjianet](https://www.npmjs.com/settings/songjianet/packages)
 - 邮箱: <a href="mailto:songjianet@gmail.com">songjianet@gmail.com</a>
 
+## 开源项目
+
+[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 的核心贡献者之一，[element-plus/element-plus](https://github.com/element-plus/element-plus) 的贡献者之一，其它个人正在开发中的开源项目累计下载量超过34000次，详细请参考本人`Github`以及`npm`。
+
+- [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过9100次；
+- [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过5200次下载量的多功能表格工具；
+- [wechat-city-picker](https://www.npmjs.com/package/wechat-city-picker) 基于微信小程序原生的省市区三级联动插件，最高单周下载量为1506次，累计下载量超过5400次；
+
 ## ZOOMICRO - 2019-01 至 2020-11
 
 ### AbloClouda
@@ -48,11 +56,3 @@
 - 设计并开发模型训练功能，允许使用终端设备进行模型的训练，支持多任务训练模式以及小息训练等；
 - 对`wave api`封装进行设计，编写`NPM`包并发布，使用户无须了解内部工作原理，只需调用`API`即可实现强大功能；
 - 使用`VuePress`编写`wave api`文档；
-
-## 开源项目
-
-[TuSimple/naive-ui](https://github.com/TuSimple/naive-ui) 的核心贡献者之一，[element-plus/element-plus](https://github.com/element-plus/element-plus) 的贡献者之一，其它个人正在开发中的开源项目累计下载量超过34000次，详细请参考本人`Github`以及`npm`。
-
-- [questionare-generator](https://songjianet.github.io/questionare-generator-dashboard/) 开源的问卷设计器，提供强大的扩展和自定义，核心模块累计下载超过9100次；
-- [multi-function-table](https://www.npmjs.com/package/multi-function-table) 一个超过5200次下载量的多功能表格工具；
-- [wechat-city-picker](https://www.npmjs.com/package/wechat-city-picker) 基于微信小程序原生的省市区三级联动插件，最高单周下载量为1506次，累计下载量超过5400次；
